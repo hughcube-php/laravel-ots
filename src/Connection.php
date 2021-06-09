@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/8
- * Time: 5:47 下午
+ * Time: 5:47 下午.
  */
 
 namespace HughCube\Laravel\OTS;
@@ -21,6 +21,7 @@ class Connection extends IlluminateConnection
 
     /**
      * Create a new database connection instance.
+     *
      * @param array $config
      */
     public function __construct(array $config)
@@ -49,7 +50,9 @@ class Connection extends IlluminateConnection
 
     /**
      * Create a new OTSClient connection.
+     *
      * @param array $config
+     *
      * @return OTSClient
      */
     protected function createConnection(array $config)
@@ -78,8 +81,10 @@ class Connection extends IlluminateConnection
 
     /**
      * Dynamically pass methods to the connection.
+     *
      * @param string $method
-     * @param array $parameters
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
