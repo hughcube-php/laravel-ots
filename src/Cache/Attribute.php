@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/8
- * Time: 11:02 下午
+ * Time: 11:02 下午.
  */
 
 namespace HughCube\Laravel\OTS\Cache;
@@ -52,6 +52,7 @@ trait Attribute
 
     /**
      * @param string $key
+     *
      * @return array
      */
     protected function makePrimaryKey($key)
@@ -59,19 +60,20 @@ trait Attribute
         return [
             ['key', $key],
             ['prefix', $this->getPrefix()],
-            ['type', ($this->type ?? 'cache')]
+            ['type', ($this->type ?? 'cache')],
         ];
     }
 
     /**
      * @param mixed $value
-     * @param integer $seconds
+     * @param int   $seconds
+     *
      * @return array[]
      */
     protected function makeAttributeColumns($value, $seconds = null)
     {
         $columns = [
-            ['created_at', Carbon::now()->toRfc3339String(true), ColumnTypeConst::CONST_STRING]
+            ['created_at', Carbon::now()->toRfc3339String(true), ColumnTypeConst::CONST_STRING],
         ];
 
         if (null !== $value) {
@@ -91,6 +93,7 @@ trait Attribute
 
     /**
      * @param array $response
+     *
      * @return mixed|null
      */
     protected function parseValueInOtsResponse($response)
@@ -117,6 +120,7 @@ trait Attribute
 
     /**
      * @param array $response
+     *
      * @return string|null
      */
     protected function parseKeyInOtsResponse($response)
@@ -126,7 +130,7 @@ trait Attribute
         }
 
         foreach ($response['primary_key'] as $primaryKey) {
-            if ("key" === $primaryKey[0]) {
+            if ('key' === $primaryKey[0]) {
                 return $primaryKey[1];
             }
         }
@@ -138,6 +142,7 @@ trait Attribute
      * Serialize the value.
      *
      * @param mixed $value
+     *
      * @return string
      */
     protected function serialize($value)
@@ -153,6 +158,7 @@ trait Attribute
      * Unserialize the value.
      *
      * @param mixed $value
+     *
      * @return mixed
      */
     protected function unserialize($value)

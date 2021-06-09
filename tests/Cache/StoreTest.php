@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/8
- * Time: 11:30 下午
+ * Time: 11:30 下午.
  */
 
 namespace HughCube\Laravel\OTS\Tests\Cache;
@@ -61,17 +61,15 @@ class StoreTest extends TestCase
         $this->assertTrue($this->getStore()->add($key, $value, 10));
     }
 
-
     public function testMany()
     {
         $items = [
             md5(serialize([random_bytes(100), time()])) => random_bytes(100),
-            md5(serialize([random_bytes(100), time()])) => random_bytes(100)
+            md5(serialize([random_bytes(100), time()])) => random_bytes(100),
         ];
         foreach ($items as $key => $value) {
             $this->assertTrue($this->getStore()->put($key, $value, 10));
         }
-
 
         $this->assertSame($this->getStore()->many(array_keys($items)), $items);
 
@@ -127,7 +125,6 @@ class StoreTest extends TestCase
         }
     }
 
-
     public function testForever()
     {
         $key = md5(serialize([random_bytes(100), time()]));
@@ -136,7 +133,6 @@ class StoreTest extends TestCase
         $this->assertTrue($this->getStore()->forever($key, $value));
         $this->assertSame($this->getStore()->get($key), $value);
     }
-
 
     public function testForget()
     {

@@ -37,6 +37,7 @@ class ServiceProvider extends IlluminateServiceProvider
             /** @var \Illuminate\Database\DatabaseManager $db */
             $db->extend('ots', function ($config, $name) {
                 $config['name'] = $name;
+
                 return new Connection($config);
             });
         });
@@ -55,6 +56,7 @@ class ServiceProvider extends IlluminateServiceProvider
                 $prefix = $config['prefix'] ?? $app['config']['cache.prefix'];
                 $indexTable = $config['indexTable'] ?? null;
                 $store = new Store($connection->getOts(), $config['table'], $prefix, $indexTable);
+
                 return $this->repository($store);
             });
         });
@@ -63,7 +65,7 @@ class ServiceProvider extends IlluminateServiceProvider
     protected function registerCommand()
     {
         $this->commands([
-            CacheGc::class
+            CacheGc::class,
         ]);
     }
 }

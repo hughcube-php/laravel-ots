@@ -32,7 +32,7 @@ class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
-            ServiceProvider::class
+            ServiceProvider::class,
         ];
     }
 
