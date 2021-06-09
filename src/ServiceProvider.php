@@ -6,11 +6,10 @@
  * Time: 10:32 下午.
  */
 
-namespace HughCube\Laravel\Package;
+namespace HughCube\Laravel\OTS;
 
-use Illuminate\Foundation\Application as LaravelApplication;
+use HughCube\Laravel\OTS\Cache\Store;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use Laravel\Lumen\Application as LumenApplication;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
@@ -19,13 +18,6 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot()
     {
-        $source = realpath(dirname(__DIR__) . '/config/config.php');
-
-        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $this->publishes([$source => config_path('package.php')]);
-        } elseif ($this->app instanceof LumenApplication) {
-            $this->app->configure('package');
-        }
     }
 
     /**
@@ -33,13 +25,26 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(
-            'package',
-            function ($app) {
-                $config = $app->make('config')->get('package', []);
+        $this->app->resolving('db', function ($db) {
+            /** @var \Illuminate\Database\DatabaseManager $db */
+            $db->extend('ots', function ($config, $name) {
+                $config['name'] = $name;
+                return new Connection($config);
+            });
+        });
 
-                return new Manager($config);
-            }
-        );
+        $this->app->resolving('cache', function ($cache) {
+            /** @var \Illuminate\Cache\CacheManager $cache */
+            $cache->extend('ots', function ($app, $config) {
+                /** @var \Illuminate\Cache\CacheManager $this */
+
+                /** @var Connection $connection */
+                $connection = $app['db']->connection($config['connection']);
+
+                $prefix = $config['prefix'] ?? $app['config']['cache.prefix'];
+                $store = new Store($connection->getOts(), $config['table'], $prefix);
+                return $this->repository($store);
+            });
+        });
     }
 }

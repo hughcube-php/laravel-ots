@@ -6,53 +6,47 @@
  * Time: 11:36 下午.
  */
 
-namespace HughCube\Laravel\Package\Tests;
+namespace HughCube\Laravel\OTS\Tests;
 
-use HughCube\Laravel\Package\ServiceProvider as PackageServiceProvider;
+use HughCube\Laravel\OTS\ServiceProvider;
+use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
     /**
-     * @param \Illuminate\Foundation\Application $app
-     *
-     * @return array
+     * @inheritDoc
+     */
+    protected function getApplicationProviders($app)
+    {
+        $providers = parent::getApplicationProviders($app);
+
+        unset($providers[array_search(PasswordResetServiceProvider::class, $providers)]);
+
+        return $providers;
+    }
+
+    /**
+     * @inheritDoc
      */
     protected function getPackageProviders($app)
     {
         return [
-            PackageServiceProvider::class,
+            ServiceProvider::class
         ];
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @inheritDoc
      */
     protected function getEnvironmentSetUp($app)
     {
-        $this->setupCache($app);
+        parent::getEnvironmentSetUp($app);
 
-        /** @var \Illuminate\Config\Repository $appConfig */
-        $appConfig = $app['config'];
-        $appConfig->set('captchaCode', (require dirname(__DIR__) . '/config/config.php'));
-    }
+        $app['config']->set('app.key', 'onahM9thZoa2YeikaiChah0jaeToh9Ra');
 
-    /**
-     * @param \Illuminate\Foundation\Application $app
-     */
-    protected function setupCache($app)
-    {
-        /** @var \Illuminate\Config\Repository $appConfig */
-        $appConfig = $app['config'];
+        $app['config']->set('database', (require 'config/database.php'));
 
-        $appConfig->set('cache', [
-            'default' => 'default',
-            'stores' => [
-                'default' => [
-                    'driver' => 'file',
-                    'path' => sprintf('/tmp/test/%s', md5(serialize([__METHOD__]))),
-                ],
-            ],
-        ]);
+        $app['config']->set('cache', (require 'config/cache.php'));
     }
 }

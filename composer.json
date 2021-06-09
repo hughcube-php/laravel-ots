@@ -1,5 +1,5 @@
 {
-    "name": "hughcube/laravel-package",
+    "name": "hughcube/laravel-ots",
     "description": "",
     "license": "MIT",
     "authors": [
@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": "7.*|8.*",
-        "illuminate/support": ">=5.0"
+        "illuminate/support": ">=5.0",
+        "aliyun/aliyun-tablestore-sdk-php": "^5.0"
     },
     "require-dev": {
         "laravel/framework": "*",
@@ -21,18 +22,18 @@
     },
     "autoload": {
         "psr-4": {
-            "HughCube\\Laravel\\Package\\": "src"
+            "HughCube\\Laravel\\OTS\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HughCube\\Laravel\\Package\\Tests\\": "tests"
+            "HughCube\\Laravel\\OTS\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "HughCube\\Laravel\\Package\\ServiceProvider"
+                "HughCube\\Laravel\\OTS\\ServiceProvider"
             ]
         }
     },
