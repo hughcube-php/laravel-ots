@@ -8,7 +8,6 @@
 
 namespace HughCube\Laravel\OTS\Cache;
 
-
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\OTSClient;
 use Illuminate\Support\Carbon;
@@ -34,44 +33,14 @@ trait Attribute
     protected $prefix;
 
     /**
-     * @var bool
+     * @var string
      */
-    protected $type = 'cache';
+    protected $type;
 
     /**
      * @var string
      */
     protected $owner;
-
-    /**
-     * @param $ots
-     * @return $this
-     */
-    public function setOts($ots)
-    {
-        $this->ots = $ots;
-        return $this;
-    }
-
-    /**
-     * @param $ots
-     * @return $this
-     */
-    public function setTable($table)
-    {
-        $this->table = $table;
-        return $this;
-    }
-
-    /**
-     * @param $ots
-     * @return $this
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
-        return $this;
-    }
 
     /**
      * @return string
@@ -95,8 +64,8 @@ trait Attribute
     }
 
     /**
-     * @param $value
-     * @param $seconds
+     * @param mixed $value
+     * @param integer $seconds
      * @return array[]
      */
     protected function makeAttributeColumns($value, $seconds = null)
@@ -121,8 +90,8 @@ trait Attribute
     }
 
     /**
-     * @param $response
-     * @return mixed
+     * @param array $response
+     * @return mixed|null
      */
     protected function parseValueInOtsResponse($response)
     {
@@ -147,7 +116,7 @@ trait Attribute
     }
 
     /**
-     * @param $response
+     * @param array $response
      * @return string|null
      */
     protected function parseKeyInOtsResponse($response)

@@ -8,17 +8,26 @@
 
 namespace HughCube\Laravel\OTS\Cache;
 
-
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\LogicalOperatorConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
+use Aliyun\OTS\OTSClient;
 use Aliyun\OTS\OTSServerException;
 
 class Lock extends \Illuminate\Cache\Lock
 {
     use Attribute;
 
+    /**
+     * Lock constructor.
+     * @param OTSClient $ots
+     * @param string $table
+     * @param string $prefix
+     * @param string $name
+     * @param integer $seconds
+     * @param null|string $owner
+     */
     public function __construct($ots, $table, $prefix, $name, $seconds, $owner = null)
     {
         parent::__construct($name, $seconds, $owner);
@@ -157,7 +166,7 @@ class Lock extends \Illuminate\Cache\Lock
         $response = $this->ots->getRow($request);
 
         if (null === $this->parseValueInOtsResponse($response)) {
-            return null;
+            return "";
         }
 
         foreach ($response['attribute_columns'] as $attribute) {
@@ -166,6 +175,6 @@ class Lock extends \Illuminate\Cache\Lock
             }
         }
 
-        return null;
+        return "";
     }
 }
