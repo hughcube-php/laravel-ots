@@ -11,6 +11,7 @@ namespace HughCube\Laravel\OTS\Cache;
 
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\OTSClient;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\InteractsWithTime;
 
 trait Attribute
@@ -35,7 +36,7 @@ trait Attribute
     /**
      * @var bool
      */
-    protected $isLock = false;
+    protected $type = 'cache';
 
     /**
      * @var string
@@ -89,7 +90,7 @@ trait Attribute
         return [
             ['key', $key],
             ['prefix', $this->getPrefix()],
-            ['is_lock', intval(true === $this->isLock)]
+            ['type', ($this->type ?? 'cache')]
         ];
     }
 
@@ -100,7 +101,9 @@ trait Attribute
      */
     protected function makeAttributeColumns($value, $seconds = null)
     {
-        $columns = [];
+        $columns = [
+            ['created_at', Carbon::now()->toRfc3339String(true), ColumnTypeConst::CONST_STRING]
+        ];
 
         if (null !== $value) {
             $columns[] = ['value', $this->serialize($value), ColumnTypeConst::CONST_BINARY];

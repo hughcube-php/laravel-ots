@@ -26,7 +26,7 @@ class Lock extends \Illuminate\Cache\Lock
         $this->ots = $ots;
         $this->table = $table;
         $this->prefix = $prefix;
-        $this->isLock = true;
+        $this->type = 'lock';
     }
 
     /**

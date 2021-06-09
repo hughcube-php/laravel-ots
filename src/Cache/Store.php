@@ -12,6 +12,7 @@ use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\OperationTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
+use Aliyun\OTS\OTSClient;
 use Aliyun\OTS\OTSServerException;
 use Closure;
 use Illuminate\Cache\TaggableStore;
@@ -23,12 +24,33 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
 {
     use Attribute;
 
-    public function __construct($ots, $table, $prefix)
+    /**
+     * @var string
+     */
+    protected $indexTable;
+
+    /**
+     * Store constructor.
+     * @param OTSClient $ots
+     * @param string $table
+     * @param string $prefix
+     * @param string|null $indexTable
+     */
+    public function __construct($ots, $table, $prefix, $indexTable)
     {
         $this->ots = $ots;
         $this->table = $table;
         $this->prefix = $prefix;
-        $this->isLock = false;
+        $this->type = 'cache';
+        $this->indexTable = $indexTable;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIndexTable()
+    {
+        return $this->indexTable;
     }
 
     /**
