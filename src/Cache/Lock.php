@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/8
- * Time: 7:42 下午
+ * Time: 7:42 下午.
  */
 
 namespace HughCube\Laravel\OTS\Cache;
@@ -21,11 +21,12 @@ class Lock extends \Illuminate\Cache\Lock
 
     /**
      * Lock constructor.
-     * @param OTSClient $ots
-     * @param string $table
-     * @param string $prefix
-     * @param string $name
-     * @param integer $seconds
+     *
+     * @param OTSClient   $ots
+     * @param string      $table
+     * @param string      $prefix
+     * @param string      $name
+     * @param int         $seconds
      * @param null|string $owner
      */
     public function __construct($ots, $table, $prefix, $name, $seconds, $owner = null)
@@ -47,55 +48,57 @@ class Lock extends \Illuminate\Cache\Lock
     {
         $request = [
             'table_name' => $this->table,
-            'condition' => [
-                'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
+            'condition'  => [
+                'row_existence'    => RowExistenceExpectationConst::CONST_IGNORE,
                 'column_condition' => [
                     'logical_operator' => LogicalOperatorConst::CONST_OR,
-                    'sub_conditions' => [
+                    'sub_conditions'   => [
                         /** (`owner` != $this->owner OR `owner` IS NULL) AND (`expiration` >=  time()) */
                         [
                             'logical_operator' => LogicalOperatorConst::CONST_AND,
-                            'sub_conditions' => [
+                            'sub_conditions'   => [
                                 [
-                                    'column_name' => 'owner',
-                                    'value' => [$this->owner, ColumnTypeConst::CONST_STRING],
-                                    'comparator' => ComparatorTypeConst::CONST_NOT_EQUAL,
-                                    'pass_if_missing' => true,
+                                    'column_name'         => 'owner',
+                                    'value'               => [$this->owner, ColumnTypeConst::CONST_STRING],
+                                    'comparator'          => ComparatorTypeConst::CONST_NOT_EQUAL,
+                                    'pass_if_missing'     => true,
                                     'latest_version_only' => true,
                                 ],
                                 [
-                                    'column_name' => 'expiration',
-                                    'value' => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
-                                    'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL,
-                                    'pass_if_missing' => true,
+                                    'column_name'         => 'expiration',
+                                    'value'               => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
+                                    'comparator'          => ComparatorTypeConst::CONST_LESS_EQUAL,
+                                    'pass_if_missing'     => true,
                                     'latest_version_only' => true,
-                                ]
-                            ]
+                                ],
+                            ],
                         ],
 
                         /** (`owner` = $this->owner OR `owner` IS NULL) */
                         [
 
-                            'column_name' => 'owner',
-                            'value' => [$this->owner, ColumnTypeConst::CONST_STRING],
-                            'comparator' => ComparatorTypeConst::CONST_EQUAL,
-                            'pass_if_missing' => true,
+                            'column_name'         => 'owner',
+                            'value'               => [$this->owner, ColumnTypeConst::CONST_STRING],
+                            'comparator'          => ComparatorTypeConst::CONST_EQUAL,
+                            'pass_if_missing'     => true,
                             'latest_version_only' => true,
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
-            'primary_key' => $this->makePrimaryKey($this->name),
+            'primary_key'       => $this->makePrimaryKey($this->name),
             'attribute_columns' => $this->makeAttributeColumns(time(), $this->seconds),
         ];
 
         try {
             $response = $this->ots->putRow($request);
+
             return isset($response['primary_key'], $response['attribute_columns']);
         } catch (OTSServerException $exception) {
             if ('OTSConditionCheckFail' === $exception->getOTSErrorCode()) {
                 return false;
             }
+
             throw $exception;
         }
     }
@@ -109,22 +112,23 @@ class Lock extends \Illuminate\Cache\Lock
     {
         $request = [
             'table_name' => $this->table,
-            'condition' => [
+            'condition'  => [
                 'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
                 /** (`owner` = $this->owner) */
                 'column_condition' => [
-                    'column_name' => 'owner',
-                    'value' => $this->owner,
-                    'comparator' => ComparatorTypeConst::CONST_EQUAL,
-                    'pass_if_missing' => false,
+                    'column_name'         => 'owner',
+                    'value'               => $this->owner,
+                    'comparator'          => ComparatorTypeConst::CONST_EQUAL,
+                    'pass_if_missing'     => false,
                     'latest_version_only' => true,
-                ]
+                ],
             ],
-            'primary_key' => $this->makePrimaryKey($this->name)
+            'primary_key' => $this->makePrimaryKey($this->name),
         ];
 
         try {
             $response = $this->ots->deleteRow($request);
+
             return isset($response['primary_key'], $response['attribute_columns']);
         } catch (OTSServerException $exception) {
             if ('OTSConditionCheckFail' === $exception->getOTSErrorCode()) {
@@ -138,17 +142,18 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Releases this lock in disregard of ownership.
      *
-     * @return boolean
+     * @return bool
      */
     public function forceRelease()
     {
         $request = [
-            'table_name' => $this->table,
-            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-            'primary_key' => $this->makePrimaryKey($this->name)
+            'table_name'  => $this->table,
+            'condition'   => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => $this->makePrimaryKey($this->name),
         ];
 
         $response = $this->ots->deleteRow($request);
+
         return isset($response['primary_key'], $response['attribute_columns']);
     }
 
@@ -158,15 +163,15 @@ class Lock extends \Illuminate\Cache\Lock
     protected function getCurrentOwner()
     {
         $request = [
-            'table_name' => $this->table,
-            'primary_key' => $this->makePrimaryKey($this->name),
-            'max_versions' => 1
+            'table_name'   => $this->table,
+            'primary_key'  => $this->makePrimaryKey($this->name),
+            'max_versions' => 1,
         ];
 
         $response = $this->ots->getRow($request);
 
         if (null === $this->parseValueInOtsResponse($response)) {
-            return "";
+            return '';
         }
 
         foreach ($response['attribute_columns'] as $attribute) {
@@ -175,6 +180,6 @@ class Lock extends \Illuminate\Cache\Lock
             }
         }
 
-        return "";
+        return '';
     }
 }

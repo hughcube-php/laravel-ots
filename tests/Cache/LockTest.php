@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/8
- * Time: 11:30 下午
+ * Time: 11:30 下午.
  */
 
 namespace HughCube\Laravel\OTS\Tests\Cache;
