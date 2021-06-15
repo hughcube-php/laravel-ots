@@ -95,7 +95,7 @@ class LockTest extends TestCase
         $this->assertSame($lock->owner(), $getCurrentOwner());
 
         sleep(11);
-        $this->assertNull($getCurrentOwner());
+        $this->assertEmpty($getCurrentOwner());
     }
 
     /**
