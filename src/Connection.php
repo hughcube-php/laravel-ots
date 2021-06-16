@@ -9,6 +9,8 @@
 namespace HughCube\Laravel\OTS;
 
 use Aliyun\OTS\OTSClient;
+use HughCube\Laravel\AlibabaCloud\AlibabaCloud;
+use HughCube\Laravel\AlibabaCloud\Client as AlibabaCloudClient;
 use Illuminate\Database\Connection as IlluminateConnection;
 use Illuminate\Support\Arr;
 
@@ -26,10 +28,40 @@ class Connection extends IlluminateConnection
      */
     public function __construct(array $config)
     {
-        $this->config = $config;
+        $this->config = $this->formatConfig($config);
 
         // Create the otsClient
         $this->ots = $this->createConnection($config);
+    }
+
+    /**
+     * @param array|string $config
+     * @return mixed|string[]
+     */
+    protected function formatConfig($config)
+    {
+        if (is_string($config)) {
+            $config = ['alibabaCloud' => $config];
+        }
+
+        $alibabaCloud = null;
+        if (Arr::has($config, 'alibabaCloud') && $config['alibabaCloud'] instanceof AlibabaCloudClient) {
+            $alibabaCloud = $config['alibabaCloud'];
+        } elseif (Arr::has($config, 'alibabaCloud')) {
+            $alibabaCloud = AlibabaCloud::client($config['alibabaCloud']);
+        }
+
+        /** AccessKeyID */
+        if (empty($config['AccessKeyID']) && null !== $alibabaCloud) {
+            $config['AccessKeyID'] = $alibabaCloud->getAccessKeyId();
+        }
+
+        /** AccessKeySecret */
+        if (empty($config['AccessKeySecret']) && null !== $alibabaCloud) {
+            $config['AccessKeySecret'] = $alibabaCloud->getAccessKeySecret();
+        }
+
+        return $config;
     }
 
     /**
@@ -83,7 +115,7 @@ class Connection extends IlluminateConnection
      * Dynamically pass methods to the connection.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
