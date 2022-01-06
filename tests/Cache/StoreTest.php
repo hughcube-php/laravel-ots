@@ -8,6 +8,9 @@
 
 namespace HughCube\Laravel\OTS\Tests\Cache;
 
+use Aliyun\OTS\OTSClientException;
+use Aliyun\OTS\OTSServerException;
+use Exception;
 use HughCube\Laravel\OTS\Cache\Store;
 use HughCube\Laravel\OTS\Tests\TestCase;
 use Illuminate\Contracts\Cache\LockProvider;
@@ -25,6 +28,11 @@ class StoreTest extends TestCase
         $this->assertInstanceOf(LockProvider::class, $this->getStore());
     }
 
+    /**
+     * @throws OTSServerException
+     * @throws OTSClientException
+     * @throws Exception
+     */
     public function testGet()
     {
         $key = md5(serialize([random_bytes(100), time()]));
@@ -39,6 +47,12 @@ class StoreTest extends TestCase
         $this->assertNull($this->getStore()->get($key));
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testPut()
     {
         $this->assertTrue(
@@ -46,6 +60,12 @@ class StoreTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testAdd()
     {
         $key = md5(serialize([random_bytes(100), time()]));
@@ -61,6 +81,12 @@ class StoreTest extends TestCase
         $this->assertTrue($this->getStore()->add($key, $value, 10));
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testMany()
     {
         $items = [
@@ -79,6 +105,12 @@ class StoreTest extends TestCase
         }, $items));
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testPutMany()
     {
         $items = [];
@@ -95,6 +127,12 @@ class StoreTest extends TestCase
         }, $items));
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testIncrement()
     {
         for ($i = 1; $i <= 100; $i++) {
@@ -110,6 +148,12 @@ class StoreTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testDecrement()
     {
         for ($i = 1; $i <= 100; $i++) {
@@ -125,6 +169,12 @@ class StoreTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testForever()
     {
         $key = md5(serialize([random_bytes(100), time()]));
@@ -134,6 +184,12 @@ class StoreTest extends TestCase
         $this->assertSame($this->getStore()->get($key), $value);
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testForget()
     {
         $value = random_bytes(100);
@@ -159,15 +215,15 @@ class StoreTest extends TestCase
     /**
      * @return Store
      */
-    protected function getStore()
+    protected function getStore(): Store
     {
         return $this->getCache()->getStore();
     }
 
     /**
-     * @return \Illuminate\Contracts\Cache\Repository|LockProvider::class
+     * @return IlluminateRepository
      */
-    protected function getCache()
+    protected function getCache(): IlluminateRepository
     {
         return Cache::store('ots');
     }

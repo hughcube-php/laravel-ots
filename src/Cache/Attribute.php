@@ -9,8 +9,7 @@
 namespace HughCube\Laravel\OTS\Cache;
 
 use Aliyun\OTS\Consts\ColumnTypeConst;
-use Aliyun\OTS\OTSClient;
-use Illuminate\Support\Carbon;
+use HughCube\Laravel\OTS\Connection;
 use Illuminate\Support\InteractsWithTime;
 
 trait Attribute
@@ -18,32 +17,32 @@ trait Attribute
     use InteractsWithTime;
 
     /**
-     * @var OTSClient
+     * @var Connection
      */
     protected $ots;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $table;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $prefix;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $type;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $owner;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPrefix()
     {
@@ -51,11 +50,10 @@ trait Attribute
     }
 
     /**
-     * @param string $key
-     *
+     * @param  string  $key
      * @return array
      */
-    protected function makePrimaryKey($key)
+    protected function makePrimaryKey(string $key)
     {
         return [
             ['key', $key],
@@ -65,16 +63,16 @@ trait Attribute
     }
 
     /**
-     * @param mixed $value
-     * @param int   $seconds
+     * @param  mixed  $value
+     * @param  int|null  $seconds
      *
      * @return array[]
      */
-    protected function makeAttributeColumns($value, $seconds = null)
+    protected function makeAttributeColumns($value, ?int $seconds = null)
     {
-        $columns = [
-            ['created_at', Carbon::now()->toRfc3339String(true), ColumnTypeConst::CONST_STRING],
-        ];
+        $columns = [];
+
+        $columns[] = ['created_at', $this->ots->availableDate(), ColumnTypeConst::CONST_STRING];
 
         if (null !== $value) {
             $columns[] = ['value', $this->serialize($value), ColumnTypeConst::CONST_BINARY];
@@ -92,22 +90,14 @@ trait Attribute
     }
 
     /**
-     * @param array $response
-     *
+     * @param  array  $response
      * @return mixed|null
      */
-    protected function parseValueInOtsResponse($response)
+    protected function parseValueInOtsResponse(array $response)
     {
-        if (empty($response['attribute_columns'])) {
-            return null;
-        }
+        $columns = $this->ots->parseRowColumns($response);
 
-        $columns = [];
-        foreach ($response['attribute_columns'] as $attribute) {
-            $columns[$attribute[0]] = $attribute[1];
-        }
-
-        if (!isset($columns['value']) || is_null($columns['value'])) {
+        if (!isset($columns['value'])) {
             return null;
         }
 
@@ -119,30 +109,20 @@ trait Attribute
     }
 
     /**
-     * @param array $response
+     * @param  array  $response
      *
      * @return string|null
      */
-    protected function parseKeyInOtsResponse($response)
+    protected function parseKeyInOtsResponse(array $response)
     {
-        if (empty($response['primary_key'])) {
-            return null;
-        }
-
-        foreach ($response['primary_key'] as $primaryKey) {
-            if ('key' === $primaryKey[0]) {
-                return $primaryKey[1];
-            }
-        }
-
-        return null;
+        $columns = $this->ots->parseRowColumns($response);
+        return $columns['key'] ?? null;
     }
 
     /**
      * Serialize the value.
      *
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return string
      */
     protected function serialize($value)
@@ -157,8 +137,7 @@ trait Attribute
     /**
      * Unserialize the value.
      *
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return mixed
      */
     protected function unserialize($value)

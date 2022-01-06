@@ -8,7 +8,10 @@
 
 namespace HughCube\Laravel\OTS\Tests\Cache;
 
+use Aliyun\OTS\OTSClientException;
+use Aliyun\OTS\OTSServerException;
 use Closure;
+use Exception;
 use HughCube\Laravel\OTS\Cache\Lock;
 use HughCube\Laravel\OTS\Cache\Store;
 use HughCube\Laravel\OTS\Tests\TestCase;
@@ -18,6 +21,9 @@ use Illuminate\Support\Facades\Cache;
 
 class LockTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testInstanceOf()
     {
         $this->assertInstanceOf(LockProvider::class, $this->getStore());
@@ -28,6 +34,11 @@ class LockTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     */
     public function testLock()
     {
         $name = md5(random_bytes(100));
@@ -44,6 +55,12 @@ class LockTest extends TestCase
         $this->assertTrue($lock->acquire());
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testRelease()
     {
         $name = md5(random_bytes(100));
@@ -62,6 +79,12 @@ class LockTest extends TestCase
         $this->assertTrue($lock->release());
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testForceRelease()
     {
         $name = md5(random_bytes(100));
@@ -80,6 +103,12 @@ class LockTest extends TestCase
         $this->assertTrue($lock->forceRelease());
     }
 
+    /**
+     * @return void
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
     public function testGetCurrentOwner()
     {
         $name = md5(random_bytes(100));
@@ -101,11 +130,8 @@ class LockTest extends TestCase
     /**
      * @return Store
      */
-    protected function getStore()
+    protected function getStore(): Store
     {
-        /** @var Store $store */
-        $store = Cache::store('ots')->getStore();
-
-        return $store;
+        return Cache::store('ots')->getStore();
     }
 }

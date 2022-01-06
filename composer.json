@@ -13,10 +13,9 @@
         "aliyun/aliyun-tablestore-sdk-php": "^5.0"
     },
     "require-dev": {
-        "hughcube/laravel-alibabacloud": "^1.2",
-        "squizlabs/php_codesniffer": "^3.6",
-        "phpstan/phpstan": "^0.12",
-        "orchestra/testbench": "^3.8"
+        "squizlabs/php_codesniffer": "*",
+        "phpstan/phpstan": "*",
+        "orchestra/testbench": "*"
     },
     "autoload": {
         "psr-4": {
