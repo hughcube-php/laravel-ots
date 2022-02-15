@@ -17,7 +17,7 @@ class CacheGc extends Command
      *
      * @var string
      */
-    protected $name = 'cache:ots-gc
+    protected $name = 'ots:gc-cache
                         {expiredTime=2592000: 已经过期多久的数据开始清理 }
     ';
 

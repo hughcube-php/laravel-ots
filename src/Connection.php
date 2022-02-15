@@ -134,7 +134,7 @@ class Connection extends IlluminateConnection
      */
     public function availableDate(int $delay = 0): string
     {
-        return Carbon::now()->addRealSeconds($delay)->rawFormat(DateTime::RFC3339_EXTENDED);
+        return Carbon::now()->addRealSeconds($delay)->format(DateTime::RFC3339_EXTENDED);
     }
 
     /**

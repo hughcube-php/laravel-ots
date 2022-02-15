@@ -10,6 +10,7 @@ namespace HughCube\Laravel\OTS;
 
 use HughCube\Laravel\OTS\Cache\Store;
 use HughCube\Laravel\OTS\Commands\CacheGc;
+use HughCube\Laravel\OTS\Commands\ClearTableCommand;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
@@ -67,6 +68,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->commands([
             CacheGc::class,
+            ClearTableCommand::class,
         ]);
     }
 }
