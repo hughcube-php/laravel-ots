@@ -54,7 +54,7 @@ class ClearTableCommand extends Command
             return;
         }
 
-        if (!$this->confirm(sprintf('Are you sure you want to clear the %s table?', $tableName))) {
+        if (!$this->confirm(sprintf('Are you sure you want to clear the "%s" table?', $tableName))) {
             return;
         }
 
@@ -65,7 +65,7 @@ class ClearTableCommand extends Command
         list($startPk, $endPk) = $this->parseRangePk($pks);
 
         $rowCount = 0;
-        while (!empty ($startPk)) {
+        while (!empty($startPk)) {
             $request = [
                 'table_name' => $tableName, 'max_versions' => 1,
                 'direction' => DirectionConst::CONST_FORWARD,
@@ -86,13 +86,19 @@ class ClearTableCommand extends Command
             $startPk = $response['next_start_primary_key'];
 
             $rowCount += count($rows);
-            $this->comment(sprintf('%s Delete %s rows from the %s table',
-                Carbon::now()->format('Y-m-d H:i:s.u'), count($rows), $tableName
+            $this->comment(sprintf(
+                '%s Delete %s rows from the "%s" table.',
+                Carbon::now()->format('Y-m-d H:i:s.u'),
+                count($rows),
+                $tableName
             ));
         }
 
-        $this->info(sprintf('%s The %s table has been cleared and %s data items have been deleted',
-            Carbon::now()->format('Y-m-d H:i:s.u'), $tableName, $rowCount
+        $this->info(sprintf(
+            '%s The "%s" table has been cleared and %s data items have been deleted.',
+            Carbon::now()->format('Y-m-d H:i:s.u'),
+            $tableName,
+            $rowCount
         ));
     }
 
