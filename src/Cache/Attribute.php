@@ -22,7 +22,7 @@ trait Attribute
     protected $ots;
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $table;
 
@@ -44,16 +44,32 @@ trait Attribute
     /**
      * @return string|null
      */
-    public function getPrefix()
+    public function getPrefix(): ?string
     {
         return $this->prefix;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    /**
+     * @return Connection
+     */
+    public function getOts(): Connection
+    {
+        return $this->ots;
     }
 
     /**
      * @param  string  $key
      * @return array
      */
-    protected function makePrimaryKey(string $key)
+    protected function makePrimaryKey(string $key): array
     {
         return [
             ['key', $key],
@@ -68,7 +84,7 @@ trait Attribute
      *
      * @return array[]
      */
-    protected function makeAttributeColumns($value, ?int $seconds = null)
+    protected function makeAttributeColumns($value, ?int $seconds = null): array
     {
         $columns = [];
 
@@ -95,7 +111,7 @@ trait Attribute
      */
     protected function parseValueInOtsResponse(array $response)
     {
-        $columns = $this->ots->parseRowColumns($response);
+        $columns = $this->getOts()->parseRowColumns($response);
 
         if (!isset($columns['value'])) {
             return null;
@@ -113,9 +129,9 @@ trait Attribute
      *
      * @return string|null
      */
-    protected function parseKeyInOtsResponse(array $response)
+    protected function parseKeyInOtsResponse(array $response): ?string
     {
-        $columns = $this->ots->parseRowColumns($response);
+        $columns = $this->getOts()->parseRowColumns($response);
         return $columns['key'] ?? null;
     }
 
@@ -125,7 +141,7 @@ trait Attribute
      * @param  mixed  $value
      * @return string
      */
-    protected function serialize($value)
+    protected function serialize($value): string
     {
         if (is_numeric($value) && !in_array($value, [INF, -INF]) && !is_nan($value)) {
             return is_string($value) ? $value : strval($value);

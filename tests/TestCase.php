@@ -17,7 +17,7 @@ class TestCase extends OrchestraTestCase
     /**
      * @inheritDoc
      */
-    protected function getApplicationProviders($app)
+    protected function getApplicationProviders($app): array
     {
         $providers = parent::getApplicationProviders($app);
 
@@ -29,7 +29,7 @@ class TestCase extends OrchestraTestCase
     /**
      * @inheritDoc
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             ServiceProvider::class,

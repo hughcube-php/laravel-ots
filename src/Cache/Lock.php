@@ -47,10 +47,10 @@ class Lock extends \Illuminate\Cache\Lock
      * @throws OTSServerException
      * @throws OTSClientException
      */
-    public function acquire()
+    public function acquire(): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => [
                 'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
                 'column_condition' => [
@@ -94,7 +94,7 @@ class Lock extends \Illuminate\Cache\Lock
         ];
 
         try {
-            $response = $this->ots->putRow($request);
+            $response = $this->getOts()->putRow($request);
 
             return isset($response['primary_key'], $response['attribute_columns']);
         } catch (OTSServerException $exception) {
@@ -113,10 +113,10 @@ class Lock extends \Illuminate\Cache\Lock
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function release()
+    public function release(): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => [
                 'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
                 /** (`owner` = $this->owner) */
@@ -132,7 +132,7 @@ class Lock extends \Illuminate\Cache\Lock
         ];
 
         try {
-            $response = $this->ots->deleteRow($request);
+            $response = $this->getOts()->deleteRow($request);
 
             return isset($response['primary_key'], $response['attribute_columns']);
         } catch (OTSServerException $exception) {
@@ -151,15 +151,15 @@ class Lock extends \Illuminate\Cache\Lock
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function forceRelease()
+    public function forceRelease(): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($this->name),
         ];
 
-        $response = $this->ots->deleteRow($request);
+        $response = $this->getOts()->deleteRow($request);
 
         return isset($response['primary_key'], $response['attribute_columns']);
     }
@@ -174,12 +174,12 @@ class Lock extends \Illuminate\Cache\Lock
     protected function getCurrentOwner()
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'primary_key' => $this->makePrimaryKey($this->name),
             'max_versions' => 1,
         ];
 
-        $response = $this->ots->getRow($request);
+        $response = $this->getOts()->getRow($request);
 
         if (null === $this->parseValueInOtsResponse($response)) {
             return '';

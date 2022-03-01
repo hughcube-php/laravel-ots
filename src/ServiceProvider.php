@@ -56,7 +56,7 @@ class ServiceProvider extends IlluminateServiceProvider
                 $connection = $app['db']->connection($config['connection']);
 
                 $prefix = $config['prefix'] ?? $app['config']['cache.prefix'];
-                $indexTable = $config['indexTable'] ?? null;
+                $indexTable = $config['index_table'] ?? null;
                 $store = new Store($connection, $config['table'], $prefix, $indexTable);
 
                 return $this->repository($store);

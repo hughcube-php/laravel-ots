@@ -50,7 +50,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * @return string|null
      */
-    public function getIndexTable()
+    public function getIndexTable(): ?string
     {
         return $this->indexTable;
     }
@@ -58,20 +58,19 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param $key
-     * @return mixed|null
+     * @inheritDoc
      * @throws OTSServerException
      * @throws OTSClientException
      */
     public function get($key)
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'primary_key' => $this->makePrimaryKey($key),
             'max_versions' => 1,
         ];
 
-        $response = $this->ots->getRow($request);
+        $response = $this->getOts()->getRow($request);
 
         return $this->parseValueInOtsResponse($response);
     }
@@ -79,39 +78,36 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * Store an item in the cache for a given number of seconds.
      *
-     * @param $key
-     * @param $value
-     * @param $seconds
-     * @return bool
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function put($key, $value, $seconds)
+    public function put($key, $value, $seconds): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($key),
             'attribute_columns' => $this->makeAttributeColumns($value, $seconds),
         ];
 
-        $response = $this->ots->putRow($request);
+        $response = $this->getOts()->putRow($request);
 
         return isset($response['primary_key'], $response['attribute_columns']);
     }
 
     /**
-     * @param $key
-     * @param $value
-     * @param $seconds
+     * @param  string|int  $key
+     * @param  mixed  $value
+     * @param  int|null  $seconds
      * @return bool
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function add($key, $value, $seconds = null)
+    public function add($key, $value, int $seconds = null): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => [
                 'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
                 /** (Col2 <= 10) */
@@ -128,7 +124,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
         ];
 
         try {
-            $response = $this->ots->putRow($request);
+            $response = $this->getOts()->putRow($request);
 
             return isset($response['primary_key'], $response['attribute_columns']);
         } catch (OTSServerException $exception) {
@@ -140,12 +136,11 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param  array  $keys
-     * @return array
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function many(array $keys)
+    public function many(array $keys): array
     {
         if (empty($keys)) {
             return [];
@@ -158,12 +153,14 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
         $request = [
             'tables' => [
                 [
-                    'table_name' => $this->table, 'max_versions' => 1, 'primary_keys' => $primaryKeys->toArray()
+                    'table_name' => $this->getTable(),
+                    'max_versions' => 1,
+                    'primary_keys' => $primaryKeys->toArray()
                 ]
             ],
         ];
 
-        $response = $this->ots->batchGetRow($request);
+        $response = $this->getOts()->batchGetRow($request);
 
         $results = Collection::make($keys)->values()->mapWithKeys(function ($key) {
             return [$key => null];
@@ -189,13 +186,11 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param  array  $values
-     * @param $seconds
-     * @return bool
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function putMany(array $values, $seconds)
+    public function putMany(array $values, $seconds): bool
     {
         if (empty($values)) {
             return true;
@@ -209,12 +204,12 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
                 'attribute_columns' => $this->makeAttributeColumns($value, $seconds),
             ];
         });
-        $request = ['tables' => [['table_name' => $this->table, 'rows' => $rows->values()->toArray()]]];
-        $response = $this->ots->batchWriteRow($request);
+        $request = ['tables' => [['table_name' => $this->getTable(), 'rows' => $rows->values()->toArray()]]];
+        $response = $this->getOts()->batchWriteRow($request);
 
         $rowResults = [];
         foreach ($response['tables'] as $table) {
-            if ($this->table !== $table['table_name']) {
+            if ($this->getTable() !== $table['table_name']) {
                 continue;
             }
             foreach ($table['rows'] as $row) {
@@ -231,15 +226,13 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function putManyForever(array $values)
+    public function putManyForever(array $values): bool
     {
         return $this->putMany($values, null);
     }
 
     /**
-     * @param $key
-     * @param  int|float  $value
-     * @return bool|int|mixed
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
@@ -251,9 +244,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param $key
-     * @param  int|float  $value
-     * @return bool|int|mixed
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
@@ -265,8 +256,8 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param  string|int  $key
+     * @param  mixed  $value
      * @param  Closure  $callback
      * @return false|mixed
      * @throws OTSClientException
@@ -281,7 +272,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
         $new = $callback((int) $current, $value);
 
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => [
                 'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
                 'column_condition' => [
@@ -297,7 +288,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
         ];
 
         try {
-            $response = $this->ots->updateRow($request);
+            $response = $this->getOts()->updateRow($request);
             if (isset($response['primary_key'], $response['attribute_columns'])) {
                 return $new;
             }
@@ -311,38 +302,38 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param $key
-     * @param $value
-     * @return bool
+     * @inheritDoc
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function forever($key, $value)
+    public function forever($key, $value): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($key),
             'attribute_columns' => $this->makeAttributeColumns($value),
         ];
 
-        $response = $this->ots->putRow($request);
+        $response = $this->getOts()->putRow($request);
 
         return isset($response['primary_key'], $response['attribute_columns']);
     }
 
     /**
      * @inheritDoc
+     * @throws OTSClientException
+     * @throws OTSServerException
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         $request = [
-            'table_name' => $this->table,
+            'table_name' => $this->getTable(),
             'condition' => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($key),
         ];
 
-        $response = $this->ots->deleteRow($request);
+        $response = $this->getOts()->deleteRow($request);
 
         return isset($response['primary_key'], $response['attribute_columns']);
     }
@@ -350,7 +341,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * @inheritDoc
      */
-    public function flush()
+    public function flush(): bool
     {
         return true;
     }
@@ -366,7 +357,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
      */
     public function lock($name, $seconds = 0, $owner = null)
     {
-        return new Lock($this->ots, $this->table, $this->prefix, $name, $seconds, $owner);
+        return new Lock($this->getOts(), $this->getTable(), $this->prefix, $name, $seconds, $owner);
     }
 
     /**

@@ -9,7 +9,7 @@
 namespace HughCube\Laravel\OTS;
 
 use Aliyun\OTS\OTSClient;
-use DateTime;
+use DateTimeInterface;
 use Exception;
 use Illuminate\Database\Connection as IlluminateConnection;
 use Illuminate\Support\Arr;
@@ -87,7 +87,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param $response
+     * @param  mixed  $response
      * @param  string  $name
      * @return int
      * @throws Exception
@@ -109,7 +109,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param $row
+     * @param  mixed  $row
      * @return array
      */
     public function parseRowColumns($row): array
@@ -134,7 +134,7 @@ class Connection extends IlluminateConnection
      */
     public function availableDate(int $delay = 0): string
     {
-        return Carbon::now()->addRealSeconds($delay)->format(DateTime::RFC3339_EXTENDED);
+        return Carbon::now()->addRealSeconds($delay)->format(DateTimeInterface::RFC3339_EXTENDED);
     }
 
     /**
@@ -147,7 +147,7 @@ class Connection extends IlluminateConnection
             return null;
         }
 
-        $dateTime = Carbon::createFromFormat(DateTime::RFC3339_EXTENDED, $date);
+        $dateTime = Carbon::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $date);
         return $dateTime instanceof Carbon ? $dateTime : null;
     }
 
