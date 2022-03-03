@@ -87,50 +87,31 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $response
+     * @param  mixed  $row
      * @param  string  $name
-     * @return int
+     * @return null|int
      * @throws Exception
+     * @deprecated 放在Ots实现
      */
-    public function parseAutoIncId($response, string $name = 'id'): int
+    public function parseAutoIncId($row, string $name = 'id'): ?int
     {
-        $id = null;
-        foreach (($response['primary_key'] ?? []) as $key) {
-            if ($name === Arr::get($key, 0) && !empty($key[1]) && is_int($key[1])) {
-                $id = $key[1];
-            }
-        }
-
-        if (empty($id) || !is_int($id)) {
-            throw new Exception('Failed to obtain the ID!');
-        }
-
-        return $id;
+        return Ots::parseRowAutoId($row, $name);
     }
 
     /**
      * @param  mixed  $row
      * @return array
+     * @deprecated 放在Ots实现
      */
     public function parseRowColumns($row): array
     {
-        $row = array_merge(
-            Arr::get($row, 'primary_key', []),
-            Arr::get($row, 'attribute_columns', [])
-        );
-
-        $columns = [];
-        foreach ($row as $item) {
-            if (isset($item[0], $item[1])) {
-                $columns[$item[0]] = $item[1];
-            }
-        }
-        return $columns;
+        return Ots::parseRow($row);
     }
 
     /**
      * @param  int  $delay
      * @return string
+     * @deprecated 放在Knight依赖实现里面
      */
     public function availableDate(int $delay = 0): string
     {
@@ -140,6 +121,7 @@ class Connection extends IlluminateConnection
     /**
      * @param  mixed  $date
      * @return Carbon|null
+     * @deprecated 放在Knight依赖实现里面
      */
     public function availableDateToDateTime($date): ?Carbon
     {
