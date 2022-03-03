@@ -9,7 +9,9 @@
 namespace HughCube\Laravel\OTS\Cache;
 
 use Aliyun\OTS\Consts\ColumnTypeConst;
+use Carbon\Carbon;
 use HughCube\Laravel\OTS\Connection;
+use HughCube\Laravel\OTS\Ots;
 use Illuminate\Support\InteractsWithTime;
 
 trait Attribute
@@ -88,7 +90,7 @@ trait Attribute
     {
         $columns = [];
 
-        $columns[] = ['created_at', $this->ots->availableDate(), ColumnTypeConst::CONST_STRING];
+        $columns[] = ['created_at', Carbon::now()->toRfc3339String(true), ColumnTypeConst::CONST_STRING];
 
         if (null !== $value) {
             $columns[] = ['value', $this->serialize($value), ColumnTypeConst::CONST_BINARY];
@@ -111,7 +113,7 @@ trait Attribute
      */
     protected function parseValueInOtsResponse(array $response)
     {
-        $columns = $this->getOts()->parseRowColumns($response);
+        $columns = Ots::parseRow($response);
 
         if (!isset($columns['value'])) {
             return null;
@@ -131,8 +133,7 @@ trait Attribute
      */
     protected function parseKeyInOtsResponse(array $response): ?string
     {
-        $columns = $this->getOts()->parseRowColumns($response);
-        return $columns['key'] ?? null;
+        return Ots::parseRow($response)['key'] ?? null;
     }
 
     /**

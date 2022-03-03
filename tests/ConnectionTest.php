@@ -8,6 +8,12 @@
 
 namespace HughCube\Laravel\OTS\Tests;
 
+use Illuminate\Database\Connection as IlluminateConnection;
+
 class ConnectionTest extends TestCase
 {
+    public function testInstanceOf()
+    {
+        $this->assertInstanceOf(IlluminateConnection::class, $this->getOts());
+    }
 }

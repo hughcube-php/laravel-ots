@@ -63,6 +63,24 @@ class Ots
     }
 
     /**
+     * @param  mixed  $row
+     * @param  string  $name
+     * @return int
+     * @throws
+     * @phpstan-ignore-next-line
+     */
+    public static function mustParseRowAutoId($row, string $name = 'id'): int
+    {
+        $id = Ots::parseRowAutoId($row);
+
+        if (!is_int($id)) {
+            throw new Exception('Failed to obtain id.');
+        }
+
+        return $id;
+    }
+
+    /**
      * @param  mixed  $response
      * @return bool
      */
