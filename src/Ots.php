@@ -66,7 +66,7 @@ class Ots
      * @param  mixed  $response
      * @return bool
      */
-    public static function batchWriteResponseIsOk($response): bool
+    public static function isBatchWriteSuccess($response): bool
     {
         if (empty($response['tables']) || !is_array($response['tables'])) {
             return false;
@@ -81,5 +81,25 @@ class Ots
         }
 
         return true;
+    }
+
+    /**
+     * @param  mixed  $response
+     * @return void
+     * @throws Exception
+     */
+    public static function throwBatchWriteException($response)
+    {
+        if (empty($response['tables']) || !is_array($response['tables'])) {
+            throw new Exception('Abnormal operation.');
+        }
+
+        foreach ($response['tables'] as $table) {
+            foreach ($table['rows'] as $row) {
+                if (empty($row['is_ok'])) {
+                    throw new Exception(sprintf('Failed to write the "%s" table.', $table['table_name']));
+                }
+            }
+        }
     }
 }
