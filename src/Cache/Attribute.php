@@ -68,7 +68,8 @@ trait Attribute
     }
 
     /**
-     * @param  string  $key
+     * @param string $key
+     *
      * @return array
      */
     protected function makePrimaryKey(string $key): array
@@ -81,8 +82,8 @@ trait Attribute
     }
 
     /**
-     * @param  mixed  $value
-     * @param  int|null  $seconds
+     * @param mixed    $value
+     * @param int|null $seconds
      *
      * @return array[]
      */
@@ -108,7 +109,8 @@ trait Attribute
     }
 
     /**
-     * @param  array  $response
+     * @param array $response
+     *
      * @return mixed|null
      */
     protected function parseValueInOtsResponse(array $response)
@@ -127,7 +129,7 @@ trait Attribute
     }
 
     /**
-     * @param  array  $response
+     * @param array $response
      *
      * @return string|null
      */
@@ -139,7 +141,8 @@ trait Attribute
     /**
      * Serialize the value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return string
      */
     protected function serialize($value): string
@@ -154,7 +157,8 @@ trait Attribute
     /**
      * Unserialize the value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return mixed
      */
     protected function unserialize($value)

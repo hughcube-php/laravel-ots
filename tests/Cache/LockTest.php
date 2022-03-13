@@ -35,9 +35,10 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return void
      */
     public function testLock()
     {
@@ -56,10 +57,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testRelease()
     {
@@ -80,10 +82,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testForceRelease()
     {
@@ -104,10 +107,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testGetCurrentOwner()
     {

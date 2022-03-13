@@ -40,6 +40,7 @@ class ServiceProvider extends IlluminateServiceProvider
             /** @var DatabaseManager $db */
             $db->extend('ots', function ($config, $name) {
                 $config['name'] = $name;
+
                 return new Connection($config);
             });
         });

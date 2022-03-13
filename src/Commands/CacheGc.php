@@ -35,15 +35,17 @@ class CacheGc extends Command
     protected $description = 'ots cache gc';
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return void
      */
     public function handle()
     {
         $store = $this->getCache()->getStore();
         if (!$store instanceof Store) {
             $this->warn('Only OTS cache can be processed.');
+
             return;
         }
 
@@ -54,7 +56,9 @@ class CacheGc extends Command
             $this->comment(sprintf(
                 '%s Delete %s rows from the "%s" table, The total number of deleted rows is %s.',
                 Carbon::now()->format('Y-m-d H:i:s.u'),
-                $deletedCount, $store->getTable(), ($count += $deletedCount)
+                $deletedCount,
+                $store->getTable(),
+                ($count += $deletedCount)
             ));
             if (0 >= $deletedCount || $deletedCount < $page) {
                 break;

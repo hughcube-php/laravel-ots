@@ -28,7 +28,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new database connection instance.
      *
-     * @param  array  $config
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -58,7 +58,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new OTSClient connection.
      *
-     * @param  array  $config
+     * @param array $config
      *
      * @return OTSClient
      */
@@ -87,10 +87,13 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
-     * @return null|int
+     * @param mixed  $row
+     * @param string $name
+     *
      * @throws Exception
+     *
+     * @return null|int
+     *
      * @deprecated 放在Ots实现
      */
     public function parseAutoIncId($row, string $name = 'id'): ?int
@@ -99,8 +102,10 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
+     * @param mixed $row
+     *
      * @return array
+     *
      * @deprecated 放在Ots实现
      */
     public function parseRowColumns($row): array
@@ -109,8 +114,10 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  int  $delay
+     * @param int $delay
+     *
      * @return string
+     *
      * @deprecated 放在Knight依赖实现里面
      */
     public function availableDate(int $delay = 0): string
@@ -119,8 +126,10 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $date
+     * @param mixed $date
+     *
      * @return Carbon|null
+     *
      * @deprecated 放在Knight依赖实现里面
      */
     public function availableDateToDateTime($date): ?Carbon
@@ -130,14 +139,16 @@ class Connection extends IlluminateConnection
         }
 
         $dateTime = Carbon::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $date);
+
         return $dateTime instanceof Carbon ? $dateTime : null;
     }
 
     /**
      * Dynamically pass methods to the connection.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call(string $method, array $parameters = [])
