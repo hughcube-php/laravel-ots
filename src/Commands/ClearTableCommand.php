@@ -16,7 +16,9 @@ use Aliyun\OTS\Consts\RowExistenceExpectationConst;
 use Aliyun\OTS\OTSClientException;
 use Aliyun\OTS\OTSServerException;
 use Carbon\Carbon;
+use Exception;
 use HughCube\Laravel\OTS\Connection;
+use HughCube\Laravel\OTS\Ots;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Arr;
@@ -133,10 +135,11 @@ class ClearTableCommand extends Command
 
     /**
      * @return Connection
+     * @throws Exception
      */
     public function getOts(): Connection
     {
-        return DB::connection($this->option('ots'));
+        return Ots::connection($this->option('ots'));
     }
 
     /**
