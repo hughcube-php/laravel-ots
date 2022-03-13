@@ -10,16 +10,20 @@ namespace HughCube\Laravel\OTS\Cache;
 
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
+use Aliyun\OTS\Consts\DirectionConst;
 use Aliyun\OTS\Consts\OperationTypeConst;
+use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
 use Aliyun\OTS\OTSClientException;
 use Aliyun\OTS\OTSServerException;
 use Closure;
+use Exception;
 use HughCube\Laravel\OTS\Connection;
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Store as IlluminateStore;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 class Store extends TaggableStore implements IlluminateStore, LockProvider
 {
@@ -371,5 +375,81 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     public function restoreLock($name, $owner)
     {
         return $this->lock($name, 0, $owner);
+    }
+
+    /**
+     * @throws OTSServerException
+     * @throws OTSClientException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function flushExpiredRows($count = 200, $expiredDuration = 24 * 3600)
+    {
+        $indexTable = $this->getIndexTable();
+        if (empty($indexTable)) {
+            throw new Exception('Configure the INDEX table first!');
+        }
+
+        if ($expiredDuration < 24 * 3600) {
+            throw new InvalidArgumentException('At least one day expired before it can be cleaned.');
+        }
+
+        /** Query */
+        $request = [
+            'table_name' => $indexTable,
+            'max_versions' => 1,
+            'direction' => DirectionConst::CONST_FORWARD,
+            'inclusive_start_primary_key' => [
+                ['expiration', 1],
+                ['key', null, PrimaryKeyTypeConst::CONST_INF_MIN],
+                ['prefix', null, PrimaryKeyTypeConst::CONST_INF_MIN],
+                ['type', null, PrimaryKeyTypeConst::CONST_INF_MIN],
+            ],
+            'exclusive_end_primary_key' => [
+                ['expiration', (time() - $expiredDuration)],
+                ['key', null, PrimaryKeyTypeConst::CONST_INF_MAX],
+                ['prefix', null, PrimaryKeyTypeConst::CONST_INF_MAX],
+                ['type', null, PrimaryKeyTypeConst::CONST_INF_MAX],
+            ],
+            'limit' => $count,
+        ];
+        $response = $this->getOts()->getRange($request);
+
+        /** Parse */
+        $rows = [];
+        foreach ($response['rows'] as $row) {
+            $row = Collection::make($row['primary_key'])->keyBy(0);
+            $rows[] = [
+                'operation_type' => OperationTypeConst::CONST_DELETE,
+                'condition' => [
+                    'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
+                    /** (Col2 <= 10) */
+                    'column_condition' => [
+                        'column_name' => 'expiration',
+                        'value' => [time(), ColumnTypeConst::CONST_INTEGER],
+                        'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL,
+                        'pass_if_missing' => true,
+                        'latest_version_only' => true,
+                    ],
+                ],
+                'primary_key' => [
+                    $row->get('key'),
+                    $row->get('prefix'),
+                    $row->get('type'),
+                ],
+            ];
+        }
+        if (empty($rows)) {
+            return 0;
+        }
+
+        /** Delete */
+        $this->getOts()->batchWriteRow([
+            'tables' => [
+                ['table_name' => $this->getTable(), 'rows' => $rows]
+            ]
+        ]);
+
+        return count($rows);
     }
 }
