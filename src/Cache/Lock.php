@@ -23,12 +23,12 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Lock constructor.
      *
-     * @param  Connection  $ots
-     * @param  string  $table
-     * @param  string  $prefix
-     * @param  string  $name
-     * @param  int  $seconds
-     * @param  string|null  $owner
+     * @param Connection  $ots
+     * @param string      $table
+     * @param string      $prefix
+     * @param string      $name
+     * @param int         $seconds
+     * @param string|null $owner
      */
     public function __construct($ots, $table, $prefix, string $name, int $seconds, ?string $owner = null)
     {
@@ -43,35 +43,36 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Attempt to acquire the lock.
      *
-     * @return bool
      * @throws OTSServerException
      * @throws OTSClientException
+     *
+     * @return bool
      */
     public function acquire(): bool
     {
         $request = [
             'table_name' => $this->getTable(),
-            'condition' => [
-                'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
+            'condition'  => [
+                'row_existence'    => RowExistenceExpectationConst::CONST_IGNORE,
                 'column_condition' => [
                     'logical_operator' => LogicalOperatorConst::CONST_OR,
-                    'sub_conditions' => [
+                    'sub_conditions'   => [
                         /** (`owner` != $this->owner OR `owner` IS NULL) AND (`expiration` >=  time()) */
                         [
                             'logical_operator' => LogicalOperatorConst::CONST_AND,
-                            'sub_conditions' => [
+                            'sub_conditions'   => [
                                 [
-                                    'column_name' => 'owner',
-                                    'value' => [$this->owner, ColumnTypeConst::CONST_STRING],
-                                    'comparator' => ComparatorTypeConst::CONST_NOT_EQUAL,
-                                    'pass_if_missing' => true,
+                                    'column_name'         => 'owner',
+                                    'value'               => [$this->owner, ColumnTypeConst::CONST_STRING],
+                                    'comparator'          => ComparatorTypeConst::CONST_NOT_EQUAL,
+                                    'pass_if_missing'     => true,
                                     'latest_version_only' => true,
                                 ],
                                 [
-                                    'column_name' => 'expiration',
-                                    'value' => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
-                                    'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL,
-                                    'pass_if_missing' => true,
+                                    'column_name'         => 'expiration',
+                                    'value'               => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
+                                    'comparator'          => ComparatorTypeConst::CONST_LESS_EQUAL,
+                                    'pass_if_missing'     => true,
                                     'latest_version_only' => true,
                                 ],
                             ],
@@ -80,16 +81,16 @@ class Lock extends \Illuminate\Cache\Lock
                         /** (`owner` = $this->owner OR `owner` IS NULL) */
                         [
 
-                            'column_name' => 'owner',
-                            'value' => [$this->owner, ColumnTypeConst::CONST_STRING],
-                            'comparator' => ComparatorTypeConst::CONST_EQUAL,
-                            'pass_if_missing' => true,
+                            'column_name'         => 'owner',
+                            'value'               => [$this->owner, ColumnTypeConst::CONST_STRING],
+                            'comparator'          => ComparatorTypeConst::CONST_EQUAL,
+                            'pass_if_missing'     => true,
                             'latest_version_only' => true,
                         ],
                     ],
                 ],
             ],
-            'primary_key' => $this->makePrimaryKey($this->name),
+            'primary_key'       => $this->makePrimaryKey($this->name),
             'attribute_columns' => $this->makeAttributeColumns(time(), $this->seconds),
         ];
 
@@ -109,22 +110,23 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Release the lock.
      *
-     * @return bool
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return bool
      */
     public function release(): bool
     {
         $request = [
             'table_name' => $this->getTable(),
-            'condition' => [
+            'condition'  => [
                 'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
                 /** (`owner` = $this->owner) */
                 'column_condition' => [
-                    'column_name' => 'owner',
-                    'value' => $this->owner,
-                    'comparator' => ComparatorTypeConst::CONST_EQUAL,
-                    'pass_if_missing' => false,
+                    'column_name'         => 'owner',
+                    'value'               => $this->owner,
+                    'comparator'          => ComparatorTypeConst::CONST_EQUAL,
+                    'pass_if_missing'     => false,
                     'latest_version_only' => true,
                 ],
             ],
@@ -147,15 +149,16 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Releases this lock in disregard of ownership.
      *
-     * @return bool
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return bool
      */
     public function forceRelease(): bool
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'table_name'  => $this->getTable(),
+            'condition'   => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($this->name),
         ];
 
@@ -167,15 +170,16 @@ class Lock extends \Illuminate\Cache\Lock
     /**
      * Returns the owner value written into the driver for this lock.
      *
-     * @return mixed|string
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return mixed|string
      */
     protected function getCurrentOwner()
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'primary_key' => $this->makePrimaryKey($this->name),
+            'table_name'   => $this->getTable(),
+            'primary_key'  => $this->makePrimaryKey($this->name),
             'max_versions' => 1,
         ];
 

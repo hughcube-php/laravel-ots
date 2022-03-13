@@ -48,10 +48,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testPut()
     {
@@ -61,10 +62,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testAdd()
     {
@@ -82,10 +84,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testMany()
     {
@@ -106,10 +109,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testPutMany()
     {
@@ -128,10 +132,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testIncrement()
     {
@@ -149,10 +154,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testDecrement()
     {
@@ -170,10 +176,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testForever()
     {
@@ -185,10 +192,11 @@ class StoreTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws Exception
+     *
+     * @return void
      */
     public function testForget()
     {

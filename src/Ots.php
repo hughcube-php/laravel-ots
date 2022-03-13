@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\DB;
 class Ots
 {
     /**
-     * @param  string  $name
-     * @return Connection
+     * @param string $name
+     *
      * @throws
+     *
+     * @return Connection
      * @phpstan-ignore-next-line
      */
     public static function connection(string $name = 'ots'): Connection
@@ -31,7 +33,8 @@ class Ots
     }
 
     /**
-     * @param  mixed  $row
+     * @param mixed $row
+     *
      * @return array
      */
     public static function parseRow($row): array
@@ -44,12 +47,14 @@ class Ots
                 $columns[$item[0]] = $item[1];
             }
         }
+
         return $columns;
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
+     * @param mixed  $row
+     * @param string $name
+     *
      * @return int
      */
     public static function parseRowAutoId($row, string $name = 'id'): ?int
@@ -59,14 +64,17 @@ class Ots
                 return $key[1];
             }
         }
+
         return null;
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
-     * @return int
+     * @param mixed  $row
+     * @param string $name
+     *
      * @throws
+     *
+     * @return int
      * @phpstan-ignore-next-line
      */
     public static function mustParseRowAutoId($row, string $name = 'id'): int
@@ -81,7 +89,8 @@ class Ots
     }
 
     /**
-     * @param  mixed  $response
+     * @param mixed $response
+     *
      * @return bool
      */
     public static function isBatchWriteSuccess($response): bool
@@ -102,9 +111,11 @@ class Ots
     }
 
     /**
-     * @param  mixed  $response
-     * @return void
+     * @param mixed $response
+     *
      * @throws Exception
+     *
+     * @return void
      */
     public static function throwBatchWriteException($response)
     {

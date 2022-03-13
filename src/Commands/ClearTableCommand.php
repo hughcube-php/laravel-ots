@@ -4,7 +4,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/2/22
- * Time: 11:18
+ * Time: 11:18.
  */
 
 namespace HughCube\Laravel\OTS\Commands;
@@ -37,10 +37,12 @@ class ClearTableCommand extends Command
     protected $description = 'Clear the ots table data.';
 
     /**
-     * @param  Schedule  $schedule
-     * @return void
+     * @param Schedule $schedule
+     *
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return void
      */
     public function handle(Schedule $schedule)
     {
@@ -49,8 +51,9 @@ class ClearTableCommand extends Command
         try {
             $table = $this->getOts()->describeTable(['table_name' => $tableName]);
         } catch (OTSServerException $exception) {
-            $this->error(sprintf("RequestId: %s", $exception->getRequestId()));
-            $this->error(sprintf("%s: %s", $exception->getOTSErrorCode(), $exception->getOTSErrorMessage()));
+            $this->error(sprintf('RequestId: %s', $exception->getRequestId()));
+            $this->error(sprintf('%s: %s', $exception->getOTSErrorCode(), $exception->getOTSErrorMessage()));
+
             return;
         }
 
@@ -67,18 +70,18 @@ class ClearTableCommand extends Command
         $rowCount = 0;
         while (!empty($startPk)) {
             $request = [
-                'table_name' => $tableName, 'max_versions' => 1,
-                'direction' => DirectionConst::CONST_FORWARD,
+                'table_name'                  => $tableName, 'max_versions' => 1,
+                'direction'                   => DirectionConst::CONST_FORWARD,
                 'inclusive_start_primary_key' => $startPk,
-                'exclusive_end_primary_key' => $endPk,
-                'limit' => 200,
+                'exclusive_end_primary_key'   => $endPk,
+                'limit'                       => 200,
             ];
             $response = $this->getOts()->getRange($request);
 
             /** 删除查询出来的数据 */
             if (!empty($rows = $this->parseDeleteRows($response))) {
                 $this->getOts()->batchWriteRow([
-                    'tables' => [['table_name' => $tableName, 'rows' => $rows]]
+                    'tables' => [['table_name' => $tableName, 'rows' => $rows]],
                 ]);
             }
 
@@ -120,10 +123,11 @@ class ClearTableCommand extends Command
         foreach ($response['rows'] as $row) {
             $rows[] = [
                 'operation_type' => OperationTypeConst::CONST_DELETE,
-                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-                'primary_key' => $row['primary_key'],
+                'condition'      => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key'    => $row['primary_key'],
             ];
         }
+
         return $rows;
     }
 
@@ -136,9 +140,10 @@ class ClearTableCommand extends Command
     }
 
     /**
-     * @return string
      * @throws OTSClientException
      * @throws OTSServerException
+     *
+     * @return string
      */
     protected function getTable(): string
     {
@@ -148,6 +153,7 @@ class ClearTableCommand extends Command
         }
 
         $tables = $this->getOts()->listTable([]);
+
         return $this->choice('You want to erase the data from that table?', $tables);
     }
 }
