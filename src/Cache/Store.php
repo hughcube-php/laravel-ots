@@ -37,10 +37,10 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * Store constructor.
      *
-     * @param  Connection  $ots
-     * @param  string  $table
-     * @param  string  $prefix
-     * @param  string|null  $indexTable
+     * @param Connection  $ots
+     * @param string      $table
+     * @param string      $prefix
+     * @param string|null $indexTable
      */
     public function __construct(Connection $ots, string $table, string $prefix, ?string $indexTable)
     {
@@ -70,8 +70,8 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     public function get($key)
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'primary_key' => $this->makePrimaryKey($key),
+            'table_name'   => $this->getTable(),
+            'primary_key'  => $this->makePrimaryKey($key),
             'max_versions' => 1,
         ];
 
@@ -91,9 +91,9 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     public function put($key, $value, $seconds): bool
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-            'primary_key' => $this->makePrimaryKey($key),
+            'table_name'        => $this->getTable(),
+            'condition'         => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key'       => $this->makePrimaryKey($key),
             'attribute_columns' => $this->makeAttributeColumns($value, $seconds),
         ];
 
@@ -103,31 +103,31 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param  string|int  $key
-     * @param  mixed  $value
-     * @param  int|null  $seconds
+     * @param string|int $key
+     * @param mixed      $value
+     * @param int|null   $seconds
+     *
+     * @throws OTSServerException
+     * @throws OTSClientException
      *
      * @return bool
-     * @throws OTSServerException
-     *
-     * @throws OTSClientException
      */
     public function add($key, $value, int $seconds = null): bool
     {
         $request = [
             'table_name' => $this->getTable(),
-            'condition' => [
+            'condition'  => [
                 'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
                 /** (Col2 <= 10) */
                 'column_condition' => [
-                    'column_name' => 'expiration',
-                    'value' => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
-                    'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL,
-                    'pass_if_missing' => true,
+                    'column_name'         => 'expiration',
+                    'value'               => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
+                    'comparator'          => ComparatorTypeConst::CONST_LESS_EQUAL,
+                    'pass_if_missing'     => true,
                     'latest_version_only' => true,
                 ],
             ],
-            'primary_key' => $this->makePrimaryKey($key),
+            'primary_key'       => $this->makePrimaryKey($key),
             'attribute_columns' => $this->makeAttributeColumns($value, $seconds),
         ];
 
@@ -163,7 +163,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
         $request = [
             'tables' => [
                 [
-                    'table_name' => $this->getTable(),
+                    'table_name'   => $this->getTable(),
                     'max_versions' => 1,
                     'primary_keys' => $primaryKeys->toArray(),
                 ],
@@ -209,9 +209,9 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
 
         $rows = Collection::make($values)->map(function ($value, $key) use ($seconds) {
             return [
-                'operation_type' => OperationTypeConst::CONST_PUT,
-                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-                'primary_key' => $this->makePrimaryKey($key),
+                'operation_type'    => OperationTypeConst::CONST_PUT,
+                'condition'         => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key'       => $this->makePrimaryKey($key),
                 'attribute_columns' => $this->makeAttributeColumns($value, $seconds),
             ];
         });
@@ -232,12 +232,12 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param  array  $values
+     * @param array $values
+     *
+     * @throws OTSServerException
+     * @throws OTSClientException
      *
      * @return bool
-     * @throws OTSServerException
-     *
-     * @throws OTSClientException
      */
     public function putManyForever(array $values): bool
     {
@@ -271,14 +271,14 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     }
 
     /**
-     * @param  string|int  $key
-     * @param  mixed  $value
-     * @param  Closure  $callback
+     * @param string|int $key
+     * @param mixed      $value
+     * @param Closure    $callback
+     *
+     * @throws OTSServerException
+     * @throws OTSClientException
      *
      * @return false|mixed
-     * @throws OTSServerException
-     *
-     * @throws OTSClientException
      */
     protected function incrementOrDecrement($key, $value, Closure $callback)
     {
@@ -290,15 +290,15 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
 
         $request = [
             'table_name' => $this->getTable(),
-            'condition' => [
-                'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
+            'condition'  => [
+                'row_existence'    => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
                 'column_condition' => [
                     'column_name' => 'value',
-                    'value' => [$this->serialize($current), ColumnTypeConst::CONST_BINARY],
-                    'comparator' => ComparatorTypeConst::CONST_EQUAL,
+                    'value'       => [$this->serialize($current), ColumnTypeConst::CONST_BINARY],
+                    'comparator'  => ComparatorTypeConst::CONST_EQUAL,
                 ],
             ],
-            'primary_key' => $this->makePrimaryKey($key),
+            'primary_key'                 => $this->makePrimaryKey($key),
             'update_of_attribute_columns' => [
                 'PUT' => $this->makeAttributeColumns($new),
             ],
@@ -327,9 +327,9 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     public function forever($key, $value): bool
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-            'primary_key' => $this->makePrimaryKey($key),
+            'table_name'        => $this->getTable(),
+            'condition'         => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key'       => $this->makePrimaryKey($key),
             'attribute_columns' => $this->makeAttributeColumns($value),
         ];
 
@@ -347,8 +347,8 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     public function forget($key): bool
     {
         $request = [
-            'table_name' => $this->getTable(),
-            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'table_name'  => $this->getTable(),
+            'condition'   => RowExistenceExpectationConst::CONST_IGNORE,
             'primary_key' => $this->makePrimaryKey($key),
         ];
 
@@ -368,9 +368,9 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * Get a lock instance.
      *
-     * @param  string  $name
-     * @param  int  $seconds
-     * @param  string|null  $owner
+     * @param string      $name
+     * @param int         $seconds
+     * @param string|null $owner
      *
      * @return \Illuminate\Contracts\Cache\Lock
      */
@@ -382,8 +382,8 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * Restore a lock instance using the owner identifier.
      *
-     * @param  string  $name
-     * @param  string  $owner
+     * @param string $name
+     * @param string $owner
      *
      * @return \Illuminate\Contracts\Cache\Lock
      */
@@ -411,9 +411,9 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
 
         /** Query */
         $response = $this->getOts()->getRange([
-            'table_name' => $indexTable,
-            'max_versions' => 1,
-            'direction' => DirectionConst::CONST_FORWARD,
+            'table_name'                  => $indexTable,
+            'max_versions'                => 1,
+            'direction'                   => DirectionConst::CONST_FORWARD,
             'inclusive_start_primary_key' => [
                 ['expiration', 1],
                 ['key', null, PrimaryKeyTypeConst::CONST_INF_MIN],
@@ -437,18 +437,19 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
             'tables' => [
                 [
                     'table_name' => $this->getTable(),
-                    'rows' => Collection::make($response['rows'])->map(function ($row) {
+                    'rows'       => Collection::make($response['rows'])->map(function ($row) {
                         $row = Collection::make($row['primary_key'])->keyBy(0);
+
                         return [
                             'operation_type' => OperationTypeConst::CONST_DELETE,
-                            'condition' => [
+                            'condition'      => [
                                 'row_existence' => RowExistenceExpectationConst::CONST_IGNORE,
                                 /** (Col2 <= 10) */
                                 'column_condition' => [
-                                    'column_name' => 'expiration',
-                                    'value' => [time(), ColumnTypeConst::CONST_INTEGER],
-                                    'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL,
-                                    'pass_if_missing' => true,
+                                    'column_name'         => 'expiration',
+                                    'value'               => [time(), ColumnTypeConst::CONST_INTEGER],
+                                    'comparator'          => ComparatorTypeConst::CONST_LESS_EQUAL,
+                                    'pass_if_missing'     => true,
                                     'latest_version_only' => true,
                                 ],
                             ],
@@ -458,7 +459,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
                                 $row->get('type'),
                             ],
                         ];
-                    })->values()->toArray()
+                    })->values()->toArray(),
                 ],
             ],
         ]);

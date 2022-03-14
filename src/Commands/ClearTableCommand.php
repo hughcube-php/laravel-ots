@@ -22,7 +22,6 @@ use HughCube\Laravel\OTS\Ots;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 class ClearTableCommand extends Command
 {
@@ -134,8 +133,9 @@ class ClearTableCommand extends Command
     }
 
     /**
-     * @return Connection
      * @throws Exception
+     *
+     * @return Connection
      */
     public function getOts(): Connection
     {
