@@ -421,7 +421,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
                 ['type', null, PrimaryKeyTypeConst::CONST_INF_MIN],
             ],
             'exclusive_end_primary_key' => [
-                ['expiration', (time() - $expiredDuration)],
+                ['expiration', ($this->currentTime() - $expiredDuration)],
                 ['key', null, PrimaryKeyTypeConst::CONST_INF_MAX],
                 ['prefix', null, PrimaryKeyTypeConst::CONST_INF_MAX],
                 ['type', null, PrimaryKeyTypeConst::CONST_INF_MAX],
@@ -447,7 +447,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
                                 /** (Col2 <= 10) */
                                 'column_condition' => [
                                     'column_name'         => 'expiration',
-                                    'value'               => [time(), ColumnTypeConst::CONST_INTEGER],
+                                    'value'               => [$this->currentTime(), ColumnTypeConst::CONST_INTEGER],
                                     'comparator'          => ComparatorTypeConst::CONST_LESS_EQUAL,
                                     'pass_if_missing'     => true,
                                     'latest_version_only' => true,
