@@ -75,7 +75,7 @@ class Connection extends IlluminateConnection
      */
     public function disconnect()
     {
-        //$this->ots = null;
+        $this->ots = null;
     }
 
     /**
