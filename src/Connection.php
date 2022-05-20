@@ -28,7 +28,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new database connection instance.
      *
-     * @param  array  $config
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -58,7 +58,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new OTSClient connection.
      *
-     * @param  array  $config
+     * @param array $config
      *
      * @return OTSClient
      */
@@ -87,12 +87,12 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
-     *
-     * @return null|int
+     * @param mixed  $row
+     * @param string $name
      *
      * @throws Exception
+     *
+     * @return null|int
      *
      * @deprecated 放在Ots实现
      */
@@ -102,7 +102,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
+     * @param mixed $row
      *
      * @return array
      *
@@ -114,7 +114,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  int  $delay
+     * @param int $delay
      *
      * @return string
      *
@@ -126,7 +126,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $date
+     * @param mixed $date
      *
      * @return Carbon|null
      *
