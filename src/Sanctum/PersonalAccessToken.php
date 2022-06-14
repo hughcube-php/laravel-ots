@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/6/14
- * Time: 17:41
+ * Time: 17:41.
  */
 
 namespace HughCube\Laravel\OTS\Sanctum;
@@ -19,11 +19,11 @@ use HughCube\Laravel\OTS\Connection;
 use HughCube\Laravel\OTS\Ots;
 
 /**
- * @property string $tokenable_type
- * @property int $tokenable_id
- * @property string $name
- * @property string $token
- * @property array $abilities
+ * @property string      $tokenable_type
+ * @property int         $tokenable_id
+ * @property string      $name
+ * @property string      $token
+ * @property array       $abilities
  * @property Carbon|null $last_used_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -49,9 +49,10 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
     }
 
     /**
-     * 最后一次使用时间在15天之前
+     * 最后一次使用时间在15天之前.
      *
-     * @param  bool  $isValid  验证的当前值
+     * @param bool $isValid 验证的当前值
+     *
      * @return bool
      */
     public function isValidAccessToken(bool $isValid = true): bool
@@ -71,12 +72,12 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
     public static function findToken($token): ?PersonalAccessToken
     {
         $request = [
-            'table_name' => static::getOtsTable(),
+            'table_name'  => static::getOtsTable(),
             'primary_key' => [
                 ['token', hash('sha256', $token)],
-                ['app', static::getApp()]
+                ['app', static::getApp()],
             ],
-            'max_versions' => 1
+            'max_versions' => 1,
         ];
 
         $row = Ots::parseRow(static::getOts()->getRow($request));
@@ -113,11 +114,11 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
 
         $this->updated_at = Carbon::now();
         $request = [
-            'table_name' => $this->table,
-            'condition' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
+            'table_name'  => $this->table,
+            'condition'   => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
             'primary_key' => [
                 ['token', $this->token],
-                ['app', $this->getApp()]
+                ['app', $this->getApp()],
             ],
             'update_of_attribute_columns' => [
                 'PUT' => [
@@ -128,7 +129,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
                     ['last_used_at', $this->last_used_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
                     ['created_at', $this->created_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
                     ['updated_at', $this->updated_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
-                ]
+                ],
             ],
         ];
 
@@ -147,11 +148,11 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
         $this->last_used_at = $this->last_used_at ?? Carbon::now();
 
         $request = [
-            'table_name' => $this->table,
-            'condition' => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
+            'table_name'  => $this->table,
+            'condition'   => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
             'primary_key' => [
                 ['token', $this->token],
-                ['app', $this->getApp()]
+                ['app', $this->getApp()],
             ],
             'attribute_columns' => [
                 ['tokenable_type', $this->tokenable_type, ColumnTypeConst::CONST_STRING],
@@ -161,7 +162,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
                 ['last_used_at', $this->last_used_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
                 ['created_at', $this->created_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
                 ['updated_at', $this->updated_at->getTimestamp(), ColumnTypeConst::CONST_DOUBLE],
-            ]
+            ],
         ];
 
         static::getOts()->putRow($request);
