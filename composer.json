@@ -10,12 +10,15 @@
     ],
     "require": {
         "php": ">=7.2",
+        "ext-json": "*",
         "aliyun/aliyun-tablestore-sdk-php": "^5.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",
         "phpstan/phpstan": "*",
-        "orchestra/testbench": "*"
+        "orchestra/testbench": "*",
+        "laravel/sanctum": "*",
+        "hughcube/base": "*"
     },
     "autoload": {
         "psr-4": {
