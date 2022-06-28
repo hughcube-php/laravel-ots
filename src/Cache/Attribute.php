@@ -39,7 +39,7 @@ trait Attribute
     protected $type;
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $owner;
 
