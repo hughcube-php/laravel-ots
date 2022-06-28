@@ -28,17 +28,17 @@ class LockTest extends TestCase
     {
         $this->assertInstanceOf(LockProvider::class, $this->getStore());
 
-        $this->assertInstanceOf(
-            IlluminateLock::class,
+        $this->assertInstanceOf(IlluminateLock::class,
             $this->getStore()->lock(md5(random_bytes(100)), 10)
         );
     }
 
     /**
-     * @throws OTSClientException
+     * @return void
      * @throws OTSServerException
      *
-     * @return void
+     * @throws OTSClientException
+     * @throws Exception
      */
     public function testLock()
     {
@@ -57,11 +57,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @throws OTSClientException
+     * @return void
      * @throws OTSServerException
      * @throws Exception
      *
-     * @return void
+     * @throws OTSClientException
      */
     public function testRelease()
     {
@@ -82,11 +82,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @throws OTSClientException
+     * @return void
      * @throws OTSServerException
      * @throws Exception
      *
-     * @return void
+     * @throws OTSClientException
      */
     public function testForceRelease()
     {
@@ -107,11 +107,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @throws OTSClientException
+     * @return void
      * @throws OTSServerException
      * @throws Exception
      *
-     * @return void
+     * @throws OTSClientException
      */
     public function testGetCurrentOwner()
     {

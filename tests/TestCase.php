@@ -11,9 +11,11 @@ namespace HughCube\Laravel\OTS\Tests;
 use HughCube\Laravel\OTS\Connection;
 use HughCube\Laravel\OTS\ServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
-use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
+/**
+ * @method Connection getConnection($connection = null, $table = null)
+ */
 class TestCase extends OrchestraTestCase
 {
     /**
@@ -52,11 +54,8 @@ class TestCase extends OrchestraTestCase
         $app['config']->set('cache', (require 'config/cache.php'));
     }
 
-    /**
-     * @return Connection
-     */
-    protected function getOts(): Connection
+    protected function getTestTable(): string
     {
-        return DB::connection('ots');
+        return 'tests';
     }
 }

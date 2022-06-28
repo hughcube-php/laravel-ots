@@ -21,9 +21,9 @@ use Illuminate\Support\Carbon;
 class Connection extends IlluminateConnection
 {
     /**
-     * @var OTSClient
+     * @var null|OTSClient
      */
-    private $ots;
+    private $ots = null;
 
     /**
      * Create a new database connection instance.
@@ -33,6 +33,12 @@ class Connection extends IlluminateConnection
     public function __construct(array $config)
     {
         $this->config = $config;
+
+        $this->useDefaultPostProcessor();
+
+        $this->useDefaultSchemaGrammar();
+
+        $this->useDefaultQueryGrammar();
     }
 
     /**
@@ -141,6 +147,39 @@ class Connection extends IlluminateConnection
         $dateTime = Carbon::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $date);
 
         return $dateTime instanceof Carbon ? $dateTime : null;
+    }
+
+    /**
+     * @inheritdoc
+     * @return Schema\Builder
+     */
+    public function getSchemaBuilder(): Schema\Builder
+    {
+        return new Schema\Builder($this);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getDefaultSchemaGrammar()
+    {
+        return new Schema\Grammar();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getDefaultPostProcessor()
+    {
+        return new Query\Processor();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getDefaultQueryGrammar()
+    {
+        return new Query\Grammar();
     }
 
     /**
