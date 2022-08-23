@@ -11,6 +11,7 @@ namespace HughCube\Laravel\OTS;
 use Aliyun\OTS\OTSClient;
 use DateTimeInterface;
 use Exception;
+use HughCube\Laravel\OTS\OTS\Handlers\OTSHandlers;
 use Illuminate\Database\Connection as IlluminateConnection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -28,7 +29,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new database connection instance.
      *
-     * @param array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
@@ -64,7 +65,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new OTSClient connection.
      *
-     * @param array $config
+     * @param  array  $config
      *
      * @return OTSClient
      */
@@ -93,12 +94,12 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param mixed  $row
-     * @param string $name
-     *
-     * @throws Exception
+     * @param  mixed  $row
+     * @param  string  $name
      *
      * @return null|int
+     *
+     * @throws Exception
      *
      * @deprecated 放在Ots实现
      */
@@ -108,7 +109,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param mixed $row
+     * @param  mixed  $row
      *
      * @return array
      *
@@ -120,7 +121,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param int $delay
+     * @param  int  $delay
      *
      * @return string
      *
@@ -132,7 +133,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param mixed $date
+     * @param  mixed  $date
      *
      * @return Carbon|null
      *
@@ -192,5 +193,12 @@ class Connection extends IlluminateConnection
         }
 
         return parent::__call($method, $parameters);
+    }
+
+    public function asyncSearch($request): OTS\Handlers\RequestContext
+    {
+        /** @phpstan-ignore-next-line */
+        $proxy = new OTSHandlers($this->getOts()->handlers);
+        return $proxy->asyncDoHandle("Search", $request);
     }
 }
