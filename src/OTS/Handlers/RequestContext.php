@@ -21,9 +21,14 @@ use Psr\Http\Message\ResponseInterface;
 class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
 {
     /**
-     * @var PromiseInterface
+     * @var PromiseInterface|null
      */
     protected $hPromise = null;
+
+    /**
+     * @var ResponseInterface|null
+     */
+    protected $hHttpResponse = null;
 
     /**
      * @var OTSHandlers
@@ -45,14 +50,21 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
         return $this;
     }
 
+    protected function getHHttpResponse(): ResponseInterface
+    {
+        if (null !== $this->hPromise && !$this->hHttpResponse instanceof ResponseInterface) {
+            $this->hHttpResponse = $this->hPromise->wait();
+        }
+        return $this->hHttpResponse;
+    }
+
     /**
      * @throws OTSClientException
      * @throws Exception
      */
     public function HWait()
     {
-        /** @var ResponseInterface $httpResponse */
-        $httpResponse = $this->hPromise->wait();
+        $httpResponse = $this->getHHttpResponse();
 
         $this->responseHeaders = [];
         $headers = $httpResponse->getHeaders();
@@ -76,5 +88,10 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
         }
 
         return $this->response;
+    }
+
+    public function __destruct()
+    {
+        $this->getHHttpResponse();
     }
 }
