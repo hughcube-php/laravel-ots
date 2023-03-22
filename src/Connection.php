@@ -100,8 +100,6 @@ class Connection extends IlluminateConnection
      * @return null|int
      *
      * @throws Exception
-     *
-     * @deprecated 放在Ots实现
      */
     public function parseAutoIncId($row, string $name = 'id'): ?int
     {
@@ -110,14 +108,32 @@ class Connection extends IlluminateConnection
 
     /**
      * @param  mixed  $row
-     *
      * @return array
-     *
-     * @deprecated 放在Ots实现
      */
     public function parseRowColumns($row): array
     {
         return Ots::parseRow($row);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function mustParseRowAutoId($row, string $name = 'id'): int
+    {
+        return Ots::mustParseRowAutoId($row, $name);
+    }
+
+    public function isSuccessBatchWriteResponse($response): int
+    {
+        return Ots::isBatchWriteSuccess($response);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function assertSuccessBatchWriteResponse($response)
+    {
+        Ots::throwBatchWriteException($response);
     }
 
     /**
