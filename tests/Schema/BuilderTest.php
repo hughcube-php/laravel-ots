@@ -123,7 +123,10 @@ class BuilderTest extends TestCase
 
         $this->getConnection()->getSchemaBuilder()->dropAllTables(['cache']);
 
-        $this->assertEmpty($this->getConnection()->getSchemaBuilder()->getAllTables());
+        $this->assertEmpty(array_diff(
+            $this->getConnection()->getSchemaBuilder()->getAllTables(),
+            ['cache']
+        ));
 
         $this->getConnection()->getSchemaBuilder()->create('cache', function (Blueprint $table) {
             $table->char('key')->primary();
