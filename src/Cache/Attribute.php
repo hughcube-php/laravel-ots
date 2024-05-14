@@ -115,7 +115,7 @@ trait Attribute
      */
     protected function parseValueInOtsResponse(array $response)
     {
-        $columns = Ots::parseRow($response);
+        $columns = $this->getOts()->parseRowColumns($response);
 
         if (!isset($columns['value'])) {
             return null;
@@ -135,7 +135,7 @@ trait Attribute
      */
     protected function parseKeyInOtsResponse(array $response): ?string
     {
-        return Ots::parseRow($response)['key'] ?? null;
+        return $this->getOts()->parseRowColumns($response)['key'] ?? null;
     }
 
     /**

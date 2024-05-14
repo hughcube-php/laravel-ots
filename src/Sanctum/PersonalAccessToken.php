@@ -80,7 +80,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
             'max_versions' => 1,
         ];
 
-        $row = Ots::parseRow(static::getOts()->getRow($request));
+        $row = static::getOts()->getRow($request);
 
         /** @var static $model */
         $model = static::query()->newModelInstance();
@@ -134,7 +134,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
             ],
         ];
 
-        static::getOts()->updateRow($request);
+        $this->getOts()->updateRow($request);
 
         return true;
     }
@@ -166,7 +166,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
             ],
         ];
 
-        static::getOts()->putRow($request);
+        $this->getOts()->putRow($request);
         $this->exists = true;
 
         return true;

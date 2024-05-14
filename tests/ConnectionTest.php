@@ -17,4 +17,9 @@ class ConnectionTest extends TestCase
     {
         $this->assertInstanceOf(IlluminateConnection::class, $this->getConnection());
     }
+
+    public function testInstanceOf()
+    {
+        $this->assertInstanceOf(IlluminateConnection::class, $this->getConnection());
+    }
 }

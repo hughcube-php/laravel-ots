@@ -23,7 +23,7 @@ class BuilderTest extends TestCase
      */
     public function testHasTable()
     {
-        $table = Str::random();
+        $table = 'a' . Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -43,7 +43,7 @@ class BuilderTest extends TestCase
      */
     public function testCreate()
     {
-        $table = Str::random();
+        $table = 'a' . Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -77,7 +77,7 @@ class BuilderTest extends TestCase
      */
     public function testDrop()
     {
-        $table = Str::random();
+        $table = 'a' . Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -109,7 +109,7 @@ class BuilderTest extends TestCase
      */
     public function testDropAllTables()
     {
-        $table = Str::random();
+        $table = 'a' . Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -121,7 +121,7 @@ class BuilderTest extends TestCase
             $table->bigIncrements('pk4')->primary();
         });
 
-        $this->getConnection()->getSchemaBuilder()->dropAllTables();
+        $this->getConnection()->getSchemaBuilder()->dropAllTables(['cache']);
 
         $this->assertEmpty($this->getConnection()->getSchemaBuilder()->getAllTables());
 

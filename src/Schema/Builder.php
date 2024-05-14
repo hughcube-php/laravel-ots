@@ -138,10 +138,12 @@ class Builder extends \Illuminate\Database\Schema\Builder
      * @throws OTSClientException
      * @throws OTSServerException
      */
-    public function dropAllTables()
+    public function dropAllTables($skipTables = [])
     {
         foreach ($this->getAllTables() as $table) {
-            $this->drop($table);
+            if(!in_array($table, $skipTables)){
+                $this->drop($table);
+            }
         }
     }
 

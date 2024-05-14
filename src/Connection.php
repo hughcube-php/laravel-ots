@@ -8,9 +8,13 @@
 
 namespace HughCube\Laravel\OTS;
 
+use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\OTSClient;
+use Aliyun\OTS\OTSClientException;
+use Aliyun\OTS\OTSServerException;
 use DateTimeInterface;
 use Exception;
+use HughCube\Laravel\OTS\Exceptions\PartialSuccessResponseException;
 use HughCube\Laravel\OTS\OTS\Handlers\OTSHandlers;
 use Illuminate\Database\Connection as IlluminateConnection;
 use Illuminate\Support\Arr;
@@ -94,12 +98,69 @@ class Connection extends IlluminateConnection
     }
 
     /**
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws Exception
+     */
+    public function putRowAndReturnId(array $request): ?int
+    {
+        /** 解析出来自增id属性名 */
+        $name = null;
+        foreach ($request['primary_key'] as $primary) {
+            $primary = array_values($primary);
+            if (isset($primary[2]) && PrimaryKeyTypeConst::CONST_PK_AUTO_INCR === $primary[2]) {
+                $name = $primary[0];
+            }
+        }
+        if (null == $name) {
+            throw new Exception('The self-increasing primary key is not declared!');
+        }
+
+        /** 插入数据 */
+        $response = $this->putRow($request);
+
+        /** 解析出来自增id */
+        foreach ($response['primary_key'] ?? [] as $primary) {
+            $primary = array_values($primary);
+            if (isset($primary[0], $primary[1]) && $name === $primary[0] && is_int($primary[1])) {
+                return $primary[1];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws OTSClientException
+     * @throws OTSServerException
+     * @throws PartialSuccessResponseException
+     */
+    public function mustBatchWriteRow(array $request): array
+    {
+        $response = $this->batchWriteRow($request);
+
+        foreach ($response['tables'] as $table) {
+            foreach ($table['rows'] as $row) {
+                if (empty($row['is_ok'])) {
+                    throw new PartialSuccessResponseException(
+                        $response,
+                        sprintf('Failed to write the "%s" table.', $table['table_name'])
+                    );
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * @param  mixed  $row
      * @param  string  $name
      *
      * @return null|int
      *
      * @throws Exception
+     * @deprecated
      */
     public function parseAutoIncId($row, string $name = 'id'): ?int
     {
@@ -109,6 +170,7 @@ class Connection extends IlluminateConnection
     /**
      * @param  mixed  $row
      * @return array
+     * @deprecated
      */
     public function parseRowColumns($row): array
     {
@@ -117,19 +179,26 @@ class Connection extends IlluminateConnection
 
     /**
      * @throws Exception
+     * @deprecated
      */
     public function mustParseRowAutoId($row, string $name = 'id'): int
     {
         return Ots::mustParseRowAutoId($row, $name);
     }
 
-    public function isSuccessBatchWriteResponse($response): int
+    /**
+     * @param $response
+     * @return bool
+     * @deprecated
+     */
+    public function isSuccessBatchWriteResponse($response): bool
     {
         return Ots::isBatchWriteSuccess($response);
     }
 
     /**
      * @throws Exception
+     * @deprecated
      */
     public function assertSuccessBatchWriteResponse($response)
     {
