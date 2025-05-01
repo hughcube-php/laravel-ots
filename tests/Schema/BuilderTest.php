@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/6/27
- * Time: 18:05
+ * Time: 18:05.
  */
 
 namespace HughCube\Laravel\OTS\Tests\Schema;
@@ -23,7 +24,7 @@ class BuilderTest extends TestCase
      */
     public function testHasTable()
     {
-        $table = 'a' . Str::random();
+        $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -43,7 +44,7 @@ class BuilderTest extends TestCase
      */
     public function testCreate()
     {
-        $table = 'a' . Str::random();
+        $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -57,6 +58,7 @@ class BuilderTest extends TestCase
         $this->assertTrue($this->getConnection()->getSchemaBuilder()->hasTable($table));
 
         $exception = null;
+
         try {
             $this->getConnection()->getSchemaBuilder()->create($table, function (Blueprint $table) {
                 $table->char('pk1')->primary();
@@ -70,14 +72,15 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSClientException
      * @throws OTSServerException
      * @throws DropTableException
+     *
+     * @return void
      */
     public function testDrop()
     {
-        $table = 'a' . Str::random();
+        $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
@@ -109,7 +112,7 @@ class BuilderTest extends TestCase
      */
     public function testDropAllTables()
     {
-        $table = 'a' . Str::random();
+        $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));

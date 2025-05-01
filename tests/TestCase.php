@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -49,9 +50,9 @@ class TestCase extends OrchestraTestCase
 
         $app['config']->set('app.key', 'onahM9thZoa2YeikaiChah0jaeToh9Ra');
 
-        $app['config']->set('database', (require 'config/database.php'));
+        $app['config']->set('database', require 'config/database.php');
 
-        $app['config']->set('cache', (require 'config/cache.php'));
+        $app['config']->set('cache', require 'config/cache.php');
     }
 
     protected function getTestTable(): string

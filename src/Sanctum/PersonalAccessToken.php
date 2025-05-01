@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -19,11 +20,11 @@ use HughCube\Laravel\OTS\Connection;
 use HughCube\Laravel\OTS\Ots;
 
 /**
- * @property string $tokenable_type
- * @property int $tokenable_id
- * @property string $name
- * @property string $token
- * @property array $abilities
+ * @property string      $tokenable_type
+ * @property int         $tokenable_id
+ * @property string      $name
+ * @property string      $token
+ * @property array       $abilities
  * @property Carbon|null $last_used_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -51,7 +52,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
     /**
      * 最后一次使用时间在15天之前.
      *
-     * @param  bool  $isValid  验证的当前值
+     * @param bool $isValid 验证的当前值
      *
      * @return bool
      */
@@ -72,7 +73,7 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
     public static function findToken($token): ?PersonalAccessToken
     {
         $request = [
-            'table_name' => static::getOtsTable(),
+            'table_name'  => static::getOtsTable(),
             'primary_key' => [
                 ['token', hash('sha256', $token)],
                 ['app', static::getApp()],
@@ -115,8 +116,8 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
 
         $this->updated_at = Carbon::now();
         $request = [
-            'table_name' => $this->table,
-            'condition' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
+            'table_name'  => $this->table,
+            'condition'   => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
             'primary_key' => [
                 ['token', $this->token],
                 ['app', $this->getApp()],
@@ -149,8 +150,8 @@ class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
         $this->last_used_at = $this->last_used_at ?? Carbon::now();
 
         $request = [
-            'table_name' => $this->table,
-            'condition' => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
+            'table_name'  => $this->table,
+            'condition'   => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
             'primary_key' => [
                 ['token', $this->token],
                 ['app', $this->getApp()],

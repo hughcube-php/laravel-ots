@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -170,7 +171,7 @@ class StoreTest extends TestCase
             $this->assertEquals($this->getStore()->get($key), 0);
 
             $newValue = $this->getStore()->decrement($key, $value);
-            $this->assertEquals($newValue, (0 - $value));
+            $this->assertEquals($newValue, 0 - $value);
             $this->assertEquals($newValue, $this->getStore()->get($key));
         }
     }

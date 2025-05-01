@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/6/27
- * Time: 18:43
+ * Time: 18:43.
  */
 
 namespace HughCube\Laravel\OTS\Schema;
@@ -19,12 +20,12 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     protected $connection;
 
     /**
-     * @param  Connection  $connection
-     * @param  string  $table
-     * @param  Closure|null  $callback
-     * @param  string  $prefix
+     * @param Connection   $connection
+     * @param string       $table
+     * @param Closure|null $callback
+     * @param string       $prefix
      */
-    public function __construct(Connection $connection, string $table, Closure $callback = null, string $prefix = '')
+    public function __construct(Connection $connection, string $table, ?Closure $callback = null, string $prefix = '')
     {
         $this->connection = $connection;
 

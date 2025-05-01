@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -112,7 +113,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
      *
      * @return bool
      */
-    public function add($key, $value, int $seconds = null): bool
+    public function add($key, $value, ?int $seconds = null): bool
     {
         $request = [
             'table_name' => $this->getTable(),
@@ -421,7 +422,7 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
                 ['type', null, PrimaryKeyTypeConst::CONST_INF_MIN],
             ],
             'exclusive_end_primary_key' => [
-                ['expiration', ($this->currentTime() - $expiredDuration)],
+                ['expiration', $this->currentTime() - $expiredDuration],
                 ['key', null, PrimaryKeyTypeConst::CONST_INF_MAX],
                 ['prefix', null, PrimaryKeyTypeConst::CONST_INF_MAX],
                 ['type', null, PrimaryKeyTypeConst::CONST_INF_MAX],

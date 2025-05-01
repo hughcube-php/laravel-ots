@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -11,7 +12,6 @@ namespace HughCube\Laravel\OTS\Cache;
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Carbon\Carbon;
 use HughCube\Laravel\OTS\Connection;
-use HughCube\Laravel\OTS\Ots;
 use Illuminate\Support\InteractsWithTime;
 
 trait Attribute
@@ -77,7 +77,7 @@ trait Attribute
         return [
             ['key', $key],
             ['prefix', $this->getPrefix()],
-            ['type', ($this->type ?? 'cache')],
+            ['type', $this->type ?? 'cache'],
         ];
     }
 
