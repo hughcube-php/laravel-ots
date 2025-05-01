@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/8/23
- * Time: 15:02
+ * Time: 15:02.
  */
 
 namespace HughCube\Laravel\OTS\OTS\Handlers;
@@ -56,10 +57,10 @@ class OTSHandlers
         $this->errorHandler->handleBefore($context);
         $this->httpHeaderHandler->handleBefore($context);
 
-        $promise = $context->httpClient->requestAsync('POST', ('/'.$context->apiName), [
-            'body' => $context->requestBody,
-            'headers' => $context->requestHeaders,
-            'timeout' => $context->clientConfig->socketTimeout,
+        $promise = $context->httpClient->requestAsync('POST', '/'.$context->apiName, [
+            'body'        => $context->requestBody,
+            'headers'     => $context->requestHeaders,
+            'timeout'     => $context->clientConfig->socketTimeout,
             'http_errors' => false, // don't throw exception when HTTP protocol errors are encountered
         ]);
 
@@ -72,6 +73,7 @@ class OTSHandlers
         if ($reflection->hasProperty($name)) {
             $property = $reflection->getProperty($name);
             $property->setAccessible(true);
+
             return $property->getValue($this->OTSHandlers);
         }
 

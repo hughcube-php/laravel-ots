@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -28,17 +29,18 @@ class LockTest extends TestCase
     {
         $this->assertInstanceOf(LockProvider::class, $this->getStore());
 
-        $this->assertInstanceOf(IlluminateLock::class,
+        $this->assertInstanceOf(
+            IlluminateLock::class,
             $this->getStore()->lock(md5(random_bytes(100)), 10)
         );
     }
 
     /**
-     * @return void
      * @throws OTSServerException
-     *
      * @throws OTSClientException
      * @throws Exception
+     *
+     * @return void
      */
     public function testLock()
     {
@@ -57,11 +59,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSServerException
      * @throws Exception
-     *
      * @throws OTSClientException
+     *
+     * @return void
      */
     public function testRelease()
     {
@@ -82,11 +84,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSServerException
      * @throws Exception
-     *
      * @throws OTSClientException
+     *
+     * @return void
      */
     public function testForceRelease()
     {
@@ -107,11 +109,11 @@ class LockTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws OTSServerException
      * @throws Exception
-     *
      * @throws OTSClientException
+     *
+     * @return void
      */
     public function testGetCurrentOwner()
     {

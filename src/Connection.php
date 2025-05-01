@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -33,7 +34,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new database connection instance.
      *
-     * @param  array  $config
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -69,7 +70,7 @@ class Connection extends IlluminateConnection
     /**
      * Create a new OTSClient connection.
      *
-     * @param  array  $config
+     * @param array $config
      *
      * @return OTSClient
      */
@@ -154,12 +155,13 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
+     * @param mixed  $row
+     * @param string $name
+     *
+     * @throws Exception
      *
      * @return null|int
      *
-     * @throws Exception
      * @deprecated
      */
     public function parseAutoIncId($row, string $name = 'id'): ?int
@@ -168,8 +170,10 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $row
+     * @param mixed $row
+     *
      * @return array
+     *
      * @deprecated
      */
     public function parseRowColumns($row): array
@@ -179,6 +183,7 @@ class Connection extends IlluminateConnection
 
     /**
      * @throws Exception
+     *
      * @deprecated
      */
     public function mustParseRowAutoId($row, string $name = 'id'): int
@@ -188,7 +193,9 @@ class Connection extends IlluminateConnection
 
     /**
      * @param $response
+     *
      * @return bool
+     *
      * @deprecated
      */
     public function isSuccessBatchWriteResponse($response): bool
@@ -198,6 +205,7 @@ class Connection extends IlluminateConnection
 
     /**
      * @throws Exception
+     *
      * @deprecated
      */
     public function assertSuccessBatchWriteResponse($response)
@@ -206,7 +214,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  int  $delay
+     * @param int $delay
      *
      * @return string
      *
@@ -218,7 +226,7 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param  mixed  $date
+     * @param mixed $date
      *
      * @return Carbon|null
      *
@@ -237,6 +245,7 @@ class Connection extends IlluminateConnection
 
     /**
      * @inheritdoc
+     *
      * @return Schema\Builder
      */
     public function getSchemaBuilder(): Schema\Builder
@@ -284,6 +293,7 @@ class Connection extends IlluminateConnection
     {
         /** @phpstan-ignore-next-line */
         $proxy = new OTSHandlers($this->getOts()->handlers);
-        return $proxy->asyncDoHandle("Search", $request);
+
+        return $proxy->asyncDoHandle('Search', $request);
     }
 }

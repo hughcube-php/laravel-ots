@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -58,7 +59,7 @@ class CacheGc extends Command
                 Carbon::now()->format('Y-m-d H:i:s.u'),
                 $deletedCount,
                 $store->getTable(),
-                ($count += $deletedCount)
+                $count += $deletedCount
             ));
             if (0 >= $deletedCount || $deletedCount < $page) {
                 break;
@@ -68,7 +69,7 @@ class CacheGc extends Command
 
     protected function getCache(): Repository
     {
-        return Cache::store(($this->option('cache') ?: null));
+        return Cache::store($this->option('cache') ?: null);
     }
 
     protected function getExpiredDuration(): int

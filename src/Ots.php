@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -14,12 +15,14 @@ use Illuminate\Support\Facades\DB;
 class Ots
 {
     /**
-     * @param  string  $name
+     * @param string $name
      *
-     * @return Connection
      * @throws
      *
+     * @return Connection
+     *
      * @deprecated
+     *
      * @phpstan-ignore-next-line
      */
     public static function connection(string $name = 'ots'): Connection
@@ -34,14 +37,15 @@ class Ots
     }
 
     /**
-     * @param  mixed  $row
+     * @param mixed $row
      *
      * @return array
+     *
      * @deprecated
      */
     public static function parseRow($row): array
     {
-        $row = array_merge(($row['primary_key'] ?? []), ($row['attribute_columns'] ?? []));
+        $row = array_merge($row['primary_key'] ?? [], $row['attribute_columns'] ?? []);
 
         $columns = [];
         foreach ($row as $item) {
@@ -54,10 +58,11 @@ class Ots
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
+     * @param mixed  $row
+     * @param string $name
      *
      * @return int
+     *
      * @deprecated
      */
     public static function parseRowAutoId($row, string $name = 'id'): ?int
@@ -72,13 +77,15 @@ class Ots
     }
 
     /**
-     * @param  mixed  $row
-     * @param  string  $name
+     * @param mixed  $row
+     * @param string $name
      *
-     * @return int
      * @throws
      *
+     * @return int
+     *
      * @deprecated
+     *
      * @phpstan-ignore-next-line
      */
     public static function mustParseRowAutoId($row, string $name = 'id'): int
@@ -93,9 +100,10 @@ class Ots
     }
 
     /**
-     * @param  mixed  $response
+     * @param mixed $response
      *
      * @return bool
+     *
      * @deprecated
      */
     public static function isBatchWriteSuccess($response): bool
@@ -116,10 +124,11 @@ class Ots
     }
 
     /**
-     * @param  mixed  $response
+     * @param mixed $response
+     *
+     * @throws Exception
      *
      * @return void
-     * @throws Exception
      *
      * @deprecated
      */

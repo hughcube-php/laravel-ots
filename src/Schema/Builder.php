@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/6/27
- * Time: 16:44
+ * Time: 16:44.
  */
 
 namespace HughCube\Laravel\OTS\Schema;
@@ -19,7 +20,7 @@ use Illuminate\Support\Collection;
 use LogicException;
 
 /**
- * @method  Connection getConnection()
+ * @method Connection getConnection()
  *
  * @property Grammar $grammar
  */
@@ -27,6 +28,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
 {
     /**
      * @inheritdoc
+     *
      * @throws OTSServerException
      * @throws OTSClientException
      */
@@ -34,11 +36,13 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         try {
             $response = $this->getConnection()->describeTable(['table_name' => $table]);
+
             return isset($response['table_meta']) && is_array($response['table_meta']);
         } catch (OTSServerException $exception) {
             if (404 === $exception->getHttpStatus()) {
                 return false;
             }
+
             throw $exception;
         }
     }
@@ -75,7 +79,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
         $request = [
             'table_meta' => [
-                'table_name' => $table,
+                'table_name'         => $table,
                 'primary_key_schema' => Collection::make($blueprint->getColumns())
                     ->map(function (ColumnDefinition $column) {
                         if (!$column->get('primary')) {
@@ -85,11 +89,12 @@ class Builder extends \Illuminate\Database\Schema\Builder
                         if (!$column->get('autoIncrement')) {
                             return [$column->get('name'), $this->grammar->getType($column)];
                         }
+
                         return [$column->get('name'), $this->grammar->getType($column), PKType::CONST_PK_AUTO_INCR];
                     })->filter()->values()->toArray(),
             ],
             'reserved_throughput' => $throughput,
-            'table_options' => $options
+            'table_options'       => $options,
         ];
 
         $response = $this->getConnection()->createTable($request);
@@ -101,7 +106,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * @inheritdoc
      */
-    protected function createBlueprint($table, Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null)
     {
         $prefix = $this->getConnection()->getConfig('prefix_indexes')
             ? $this->getConnection()->getConfig('prefix')
@@ -112,6 +117,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
     /**
      * @inheritdoc
+     *
      * @throws DropTableException
      * @throws OTSClientException
      * @throws OTSServerException
@@ -129,11 +135,12 @@ class Builder extends \Illuminate\Database\Schema\Builder
      */
     public function dropColumns($table, $columns)
     {
-        return;
+
     }
 
     /**
      * @inheritDoc
+     *
      * @throws DropTableException
      * @throws OTSClientException
      * @throws OTSServerException
@@ -141,16 +148,17 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function dropAllTables($skipTables = [])
     {
         foreach ($this->getAllTables() as $table) {
-            if(!in_array($table, $skipTables)){
+            if (!in_array($table, $skipTables)) {
                 $this->drop($table);
             }
         }
     }
 
     /**
-     * @return array
      * @throws OTSServerException
      * @throws OTSClientException
+     *
+     * @return array
      */
     public function getAllTables(): array
     {

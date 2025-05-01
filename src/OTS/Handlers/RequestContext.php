@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2022/8/23
- * Time: 14:53
+ * Time: 14:53.
  */
 
 namespace HughCube\Laravel\OTS\OTS\Handlers;
@@ -16,7 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * @property GuzzleHttpClient $httpClient
- * @property null|Exception $otsServerException
+ * @property null|Exception   $otsServerException
  */
 class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
 {
@@ -47,6 +48,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
     public function withHHandlers($handlers): RequestContext
     {
         $this->otsHandlers = $handlers;
+
         return $this;
     }
 
@@ -55,6 +57,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
         if (null !== $this->hPromise && !$this->hHttpResponse instanceof ResponseInterface) {
             $this->hHttpResponse = $this->hPromise->wait();
         }
+
         return $this->hHttpResponse;
     }
 
@@ -72,7 +75,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
             $this->responseHeaders[$key] = $value[0];
         }
 
-        $this->responseBody = (string)$httpResponse->getBody();
+        $this->responseBody = (string) $httpResponse->getBody();
         $this->responseHttpStatus = $httpResponse->getStatusCode();
         $this->responseReasonPhrase = $httpResponse->getReasonPhrase();
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hugh.li
@@ -8,7 +9,6 @@
 
 namespace HughCube\Laravel\OTS\Tests;
 
-use HughCube\Laravel\OTS\Connection;
 use Illuminate\Database\Connection as IlluminateConnection;
 
 class ConnectionTest extends TestCase
