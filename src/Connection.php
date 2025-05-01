@@ -249,7 +249,7 @@ class Connection extends IlluminateConnection
      */
     protected function getDefaultSchemaGrammar()
     {
-        return new Schema\Grammar();
+        return new Schema\Grammar($this);
     }
 
     /**
@@ -265,7 +265,7 @@ class Connection extends IlluminateConnection
      */
     protected function getDefaultQueryGrammar()
     {
-        return new Query\Grammar();
+        return new Query\Grammar($this);
     }
 
     /**
