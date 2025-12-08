@@ -296,4 +296,12 @@ class Connection extends IlluminateConnection
 
         return $proxy->asyncDoHandle('Search', $request);
     }
+
+    public function asyncSqlQuery($request): OTS\Handlers\RequestContext
+    {
+        /** @phpstan-ignore-next-line */
+        $proxy = new OTSHandlers($this->getOts()->handlers);
+
+        return $proxy->asyncDoHandle('SQLQuery', $request);
+    }
 }
