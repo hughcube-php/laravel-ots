@@ -155,12 +155,12 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @param mixed  $row
+     * @param mixed $row
      * @param string $name
      *
-     * @throws Exception
-     *
      * @return null|int
+     *
+     * @throws Exception
      *
      * @deprecated
      */
@@ -289,19 +289,21 @@ class Connection extends IlluminateConnection
         return parent::__call($method, $parameters);
     }
 
-    public function asyncSearch($request): OTS\Handlers\RequestContext
+    public function asyncDoHandle($apiName, $request): OTS\Handlers\RequestContext
     {
         /** @phpstan-ignore-next-line */
         $proxy = new OTSHandlers($this->getOts()->handlers);
 
-        return $proxy->asyncDoHandle('Search', $request);
+        return $proxy->asyncDoHandle($apiName, $request);
+    }
+
+    public function asyncSearch($request): OTS\Handlers\RequestContext
+    {
+        return $this->asyncDoHandle('Search', $request);
     }
 
     public function asyncSqlQuery($request): OTS\Handlers\RequestContext
     {
-        /** @phpstan-ignore-next-line */
-        $proxy = new OTSHandlers($this->getOts()->handlers);
-
-        return $proxy->asyncDoHandle('SQLQuery', $request);
+        return $this->asyncDoHandle('SQLQuery', $request);
     }
 }
