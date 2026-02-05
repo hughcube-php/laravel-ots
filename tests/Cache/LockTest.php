@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Cache;
 
 class LockTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->skipIfNetworkUnavailable();
+        $this->skipIfCacheTableNotExists();
+    }
+
     /**
      * @throws Exception
      */

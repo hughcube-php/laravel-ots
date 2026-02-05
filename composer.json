@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "ext-json": "*",
         "aliyun/aliyun-tablestore-sdk-php": "*"
     },
@@ -19,7 +19,8 @@
         "orchestra/testbench": "*",
         "laravel/sanctum": "*",
         "hughcube/base": "*",
-        "jenssegers/mongodb": "*"
+        "jenssegers/mongodb": "*",
+        "mongodb/laravel-mongodb": "*"
     },
     "autoload": {
         "psr-4": {

@@ -306,4 +306,67 @@ class Connection extends IlluminateConnection
     {
         return $this->asyncDoHandle('SQLQuery', $request);
     }
+
+    /**
+     * Create a new OTS local transaction instance.
+     *
+     * @param string $tableName The table name
+     * @param array $partitionKey The partition key (first primary key column)
+     */
+    public function beginLocalTransaction(string $tableName, array $partitionKey): Transaction
+    {
+        $transaction = new Transaction($this, $tableName, $partitionKey);
+        $transaction->begin();
+
+        return $transaction;
+    }
+
+    /**
+     * Execute a callback within an OTS local transaction.
+     *
+     * @param string $tableName The table name
+     * @param array $partitionKey The partition key
+     * @param \Closure $callback The callback to execute
+     * @return mixed The callback result
+     *
+     * @throws \Throwable
+     */
+    /**
+     * @return mixed
+     */
+    public function localTransaction(string $tableName, array $partitionKey, \Closure $callback)
+    {
+        $transaction = $this->beginLocalTransaction($tableName, $partitionKey);
+
+        try {
+            $result = $callback($transaction);
+            $transaction->commit();
+
+            return $result;
+        } catch (\Throwable $e) {
+            $transaction->rollback();
+            throw $e;
+        }
+    }
+
+    /**
+     * Create a parallel scanner for a search index.
+     *
+     * @param string $tableName The table name
+     * @param string $indexName The search index name
+     */
+    public function parallelScanner(string $tableName, string $indexName): ParallelScanner
+    {
+        return new ParallelScanner($this, $tableName, $indexName);
+    }
+
+    /**
+     * Create a stream reader for a table.
+     *
+     * @param string $tableName The table name
+     */
+    public function streamReader(string $tableName): Stream\StreamReader
+    {
+        return new Stream\StreamReader($this, $tableName);
+    }
 }

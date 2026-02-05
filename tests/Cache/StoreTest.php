@@ -21,6 +21,13 @@ use Illuminate\Support\Facades\Cache;
 
 class StoreTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->skipIfNetworkUnavailable();
+        $this->skipIfCacheTableNotExists();
+    }
+
     public function testInstanceOf()
     {
         $this->assertInstanceOf(IlluminateRepository::class, $this->getCache());
