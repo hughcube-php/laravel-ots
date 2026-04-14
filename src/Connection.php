@@ -9,6 +9,7 @@
 
 namespace HughCube\Laravel\OTS;
 
+use Aliyun\OTS\AsyncResponse;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\OTSClient;
 use Aliyun\OTS\OTSClientException;
@@ -17,6 +18,7 @@ use DateTimeInterface;
 use Exception;
 use HughCube\Laravel\OTS\Exceptions\PartialSuccessResponseException;
 use HughCube\Laravel\OTS\OTS\Handlers\OTSHandlers;
+use HughCube\Laravel\OTS\OTS\Handlers\RequestContext;
 use Illuminate\Database\Connection as IlluminateConnection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -292,8 +294,8 @@ class Connection extends IlluminateConnection
     /**
      * Async API call with graceful degradation:
      * 1. SDK native async method (requires aliyun-tablestore-php-sdk >= 6.1)
-     * 2. SDK getHandlers() accessor
-     * 3. Direct property access via reflection proxy (legacy fallback)
+     * 2. SDK getHandlers() accessor (>= 6.0.1)
+     * 3. Direct property access (<=5.1.4, $handlers is implicit public)
      *
      * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
      */
@@ -316,7 +318,9 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
+     * @param $request
+     * @return AsyncResponse|RequestContext
+     * @throws OTSClientException
      */
     public function asyncSearch($request)
     {
@@ -330,7 +334,9 @@ class Connection extends IlluminateConnection
     }
 
     /**
-     * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
+     * @param $request
+     * @return AsyncResponse|RequestContext
+     * @throws OTSClientException
      */
     public function asyncSqlQuery($request)
     {

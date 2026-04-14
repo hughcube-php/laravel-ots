@@ -11,7 +11,7 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "aliyun/aliyun-tablestore-sdk-php": "<=5.1.4 || >=6.0.1"
+        "aliyun/aliyun-tablestore-sdk-php": "<=5.1.3 || >=6.0.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",

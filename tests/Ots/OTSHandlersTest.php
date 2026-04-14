@@ -25,8 +25,9 @@ class OTSHandlersTest extends TestCase
     protected function getOTSHandlers(): OTSHandlers
     {
         $ots = $this->getConnection()->getOts();
-        $aliyunHandlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
-        return new OTSHandlers($aliyunHandlers);
+        /** @phpstan-ignore-next-line */
+        $handlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
+        return new OTSHandlers($handlers);
     }
 
     public function testDoHandle()

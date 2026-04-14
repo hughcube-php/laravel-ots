@@ -30,9 +30,9 @@ class RequestContextTest extends TestCase
     protected function createFallbackContext(string $apiName = 'ListTable', array $request = []): RequestContext
     {
         $ots = $this->getConnection()->getOts();
-        $aliyunHandlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
         /** @phpstan-ignore-next-line */
-        $proxy = new OTSHandlers($aliyunHandlers);
+        $handlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
+        $proxy = new OTSHandlers($handlers);
         return $proxy->asyncDoHandle($apiName, $request);
     }
 

@@ -361,6 +361,20 @@ class Store extends TaggableStore implements IlluminateStore, LockProvider
     /**
      * @inheritDoc
      */
+    public function touch($key, $seconds): bool
+    {
+        $value = $this->get($key);
+
+        if ($value === null) {
+            return false;
+        }
+
+        return $this->put($key, $value, $seconds);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function flush(): bool
     {
         return true;
