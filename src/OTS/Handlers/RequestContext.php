@@ -104,7 +104,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
      *
      * @return mixed
      */
-    public function HWait()
+    public function wait()
     {
         // If already called, return cached result or throw cached exception
         if ($this->hWaitCalled) {
@@ -160,6 +160,14 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
     }
 
     /**
+     * @deprecated Use wait() instead.
+     */
+    public function HWait()
+    {
+        return $this->wait();
+    }
+
+    /**
      * Get the response without throwing exceptions.
      * Returns null if request failed.
      *
@@ -168,7 +176,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
     public function getResponse()
     {
         try {
-            return $this->HWait();
+            return $this->wait();
         } catch (Throwable $e) {
             return null;
         }
@@ -181,7 +189,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
     {
         if (!$this->hWaitCalled) {
             try {
-                $this->HWait();
+                $this->wait();
             } catch (Throwable $e) {
                 // Exception is now cached
             }
@@ -205,7 +213,7 @@ class RequestContext extends \Aliyun\OTS\Handlers\RequestContext
     {
         if (!$this->hWaitCalled) {
             try {
-                $this->HWait();
+                $this->wait();
             } catch (Throwable $e) {
                 return false;
             }

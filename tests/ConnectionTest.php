@@ -343,9 +343,9 @@ class ConnectionTest extends TestCase
         $this->skipIfNetworkUnavailable();
 
         $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $this->assertInstanceOf(RequestContext::class, $context);
+        $this->assertTrue(method_exists($context, 'wait'));
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 
@@ -371,9 +371,9 @@ class ConnectionTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(RequestContext::class, $context);
+        $this->assertTrue(method_exists($context, 'wait'));
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
         $this->assertArrayHasKey('total_hits', $response);
     }
@@ -388,9 +388,9 @@ class ConnectionTest extends TestCase
             'query' => 'SELECT * FROM cache LIMIT 1',
         ]);
 
-        $this->assertInstanceOf(RequestContext::class, $context);
+        $this->assertTrue(method_exists($context, 'wait'));
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 }

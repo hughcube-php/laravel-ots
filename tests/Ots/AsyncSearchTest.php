@@ -9,7 +9,6 @@
 
 namespace HughCube\Laravel\OTS\Tests\Ots;
 
-use HughCube\Laravel\OTS\OTS\Handlers\RequestContext;
 use HughCube\Laravel\OTS\Tests\TestCase;
 
 class AsyncSearchTest extends TestCase
@@ -20,24 +19,21 @@ class AsyncSearchTest extends TestCase
         $this->skipIfNetworkUnavailable();
     }
 
-    public function testAsyncSearchReturnsRequestContext()
+    public function testAsyncSearchReturnsAsyncContext()
     {
-        // Test that asyncSearch returns a RequestContext
-        // We can't test actual search without a valid table and index
         $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $this->assertInstanceOf(RequestContext::class, $context);
+        $this->assertTrue(method_exists($context, 'wait'));
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 
-    public function testAsyncSqlQueryReturnsRequestContext()
+    public function testAsyncSqlQueryReturnsAsyncContext()
     {
-        // Test that asyncSqlQuery returns a RequestContext
         $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $this->assertInstanceOf(RequestContext::class, $context);
+        $this->assertTrue(method_exists($context, 'wait'));
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 }

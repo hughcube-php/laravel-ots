@@ -24,7 +24,9 @@ class OTSHandlersTest extends TestCase
 
     protected function getOTSHandlers(): OTSHandlers
     {
-        return new OTSHandlers($this->getConnection()->getOts()->handlers);
+        $ots = $this->getConnection()->getOts();
+        $aliyunHandlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
+        return new OTSHandlers($aliyunHandlers);
     }
 
     public function testDoHandle()
@@ -42,7 +44,7 @@ class OTSHandlersTest extends TestCase
         $context = $handlers->asyncDoHandle('ListTable', []);
         $this->assertInstanceOf(RequestContext::class, $context);
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 

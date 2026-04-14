@@ -13,6 +13,9 @@ use HughCube\Laravel\OTS\OTS\Handlers\OTSHandlers;
 use HughCube\Laravel\OTS\OTS\Handlers\RequestContext;
 use HughCube\Laravel\OTS\Tests\TestCase;
 
+/**
+ * Tests for the laravel-ots fallback RequestContext (used when SDK lacks native async).
+ */
 class RequestContextTest extends TestCase
 {
     protected function setUp(): void
@@ -21,13 +24,24 @@ class RequestContextTest extends TestCase
         $this->skipIfNetworkUnavailable();
     }
 
+    /**
+     * Create a RequestContext via the fallback OTSHandlers proxy, bypassing SDK native async.
+     */
+    protected function createFallbackContext(string $apiName = 'ListTable', array $request = []): RequestContext
+    {
+        $ots = $this->getConnection()->getOts();
+        $aliyunHandlers = method_exists($ots, 'getHandlers') ? $ots->getHandlers() : $ots->handlers;
+        /** @phpstan-ignore-next-line */
+        $proxy = new OTSHandlers($aliyunHandlers);
+        return $proxy->asyncDoHandle($apiName, $request);
+    }
+
     public function testWithHPromise()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
         $this->assertInstanceOf(RequestContext::class, $context);
 
-        // The context should already have a promise set
         $reflection = new \ReflectionClass($context);
         $property = $reflection->getProperty('hPromise');
         $property->setAccessible(true);
@@ -38,7 +52,7 @@ class RequestContextTest extends TestCase
 
     public function testWithHHandlers()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
         $reflection = new \ReflectionClass($context);
         $property = $reflection->getProperty('otsHandlers');
@@ -48,34 +62,34 @@ class RequestContextTest extends TestCase
         $this->assertInstanceOf(OTSHandlers::class, $handlers);
     }
 
-    public function testHWait()
+    public function testWait()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
-        $response = $context->HWait();
+        $response = $context->wait();
         $this->assertIsArray($response);
     }
 
     public function testResponseReasonPhrase()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $context->HWait();
+        $context = $this->createFallbackContext();
+        $context->wait();
 
         $this->assertSame('OK', $context->responseReasonPhrase);
     }
 
     public function testResponseHttpStatus()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $context->HWait();
+        $context = $this->createFallbackContext();
+        $context->wait();
 
         $this->assertSame(200, $context->responseHttpStatus);
     }
 
     public function testResponseHeaders()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $context->HWait();
+        $context = $this->createFallbackContext();
+        $context->wait();
 
         $this->assertIsArray($context->responseHeaders);
         $this->assertNotEmpty($context->responseHeaders);
@@ -83,19 +97,15 @@ class RequestContextTest extends TestCase
 
     public function testDestructor()
     {
-        // Create a context
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-
-        // Let the destructor handle waiting for the response
+        $context = $this->createFallbackContext();
         unset($context);
 
-        // If we get here without errors, the destructor worked
         $this->assertTrue(true);
     }
 
     public function testIsPendingBeforeWait()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
         $this->assertTrue($context->isPending());
         $this->assertFalse($context->isCompleted());
@@ -103,8 +113,8 @@ class RequestContextTest extends TestCase
 
     public function testIsCompletedAfterWait()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $context->HWait();
+        $context = $this->createFallbackContext();
+        $context->wait();
 
         $this->assertFalse($context->isPending());
         $this->assertTrue($context->isCompleted());
@@ -112,7 +122,7 @@ class RequestContextTest extends TestCase
 
     public function testSuccessful()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
         $this->assertTrue($context->successful());
         $this->assertFalse($context->failed());
@@ -120,7 +130,7 @@ class RequestContextTest extends TestCase
 
     public function testGetResponse()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
         $response = $context->getResponse();
         $this->assertIsArray($response);
@@ -128,33 +138,30 @@ class RequestContextTest extends TestCase
 
     public function testGetExceptionOnSuccess()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
-        $context->HWait();
+        $context = $this->createFallbackContext();
+        $context->wait();
 
         $this->assertNull($context->getException());
     }
 
-    public function testMultipleHWaitCallsReturnCachedResult()
+    public function testMultipleWaitCallsReturnCachedResult()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
-        $response1 = $context->HWait();
-        $response2 = $context->HWait();
+        $response1 = $context->wait();
+        $response2 = $context->wait();
 
-        // All calls should return the same cached result
         $this->assertSame($response1, $response2);
     }
 
     public function testStateAfterMultipleCalls()
     {
-        $context = $this->getConnection()->asyncDoHandle('ListTable', []);
+        $context = $this->createFallbackContext();
 
-        // Call multiple times
-        $context->HWait();
+        $context->wait();
         $context->successful();
         $context->getResponse();
 
-        // State should remain consistent
         $this->assertTrue($context->isCompleted());
         $this->assertTrue($context->successful());
         $this->assertFalse($context->failed());

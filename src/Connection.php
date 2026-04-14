@@ -289,21 +289,57 @@ class Connection extends IlluminateConnection
         return parent::__call($method, $parameters);
     }
 
-    public function asyncDoHandle($apiName, $request): OTS\Handlers\RequestContext
+    /**
+     * Async API call with graceful degradation:
+     * 1. SDK native async method (requires aliyun-tablestore-php-sdk >= 6.1)
+     * 2. SDK getHandlers() accessor
+     * 3. Direct property access via reflection proxy (legacy fallback)
+     *
+     * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
+     */
+    public function asyncDoHandle($apiName, $request)
     {
-        /** @phpstan-ignore-next-line */
-        $proxy = new OTSHandlers($this->getOts()->handlers);
+        $ots = $this->getOts();
 
+        if (method_exists($ots, 'asyncDoHandle')) {
+            return $ots->asyncDoHandle($apiName, $request);
+        }
+
+        if (method_exists($ots, 'getHandlers')) {
+            $proxy = new OTSHandlers($ots->getHandlers());
+            return $proxy->asyncDoHandle($apiName, $request);
+        }
+
+        /** @phpstan-ignore-next-line */
+        $proxy = new OTSHandlers($ots->handlers);
         return $proxy->asyncDoHandle($apiName, $request);
     }
 
-    public function asyncSearch($request): OTS\Handlers\RequestContext
+    /**
+     * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
+     */
+    public function asyncSearch($request)
     {
+        $ots = $this->getOts();
+
+        if (method_exists($ots, 'asyncSearch')) {
+            return $ots->asyncSearch($request);
+        }
+
         return $this->asyncDoHandle('Search', $request);
     }
 
-    public function asyncSqlQuery($request): OTS\Handlers\RequestContext
+    /**
+     * @return \Aliyun\OTS\AsyncResponse|OTS\Handlers\RequestContext
+     */
+    public function asyncSqlQuery($request)
     {
+        $ots = $this->getOts();
+
+        if (method_exists($ots, 'asyncSqlQuery')) {
+            return $ots->asyncSqlQuery($request);
+        }
+
         return $this->asyncDoHandle('SQLQuery', $request);
     }
 
@@ -312,6 +348,9 @@ class Connection extends IlluminateConnection
      *
      * @param string $tableName The table name
      * @param array $partitionKey The partition key (first primary key column)
+     * @return Transaction
+     * @throws OTSClientException
+     * @throws OTSServerException
      */
     public function beginLocalTransaction(string $tableName, array $partitionKey): Transaction
     {
@@ -330,9 +369,6 @@ class Connection extends IlluminateConnection
      * @return mixed The callback result
      *
      * @throws \Throwable
-     */
-    /**
-     * @return mixed
      */
     public function localTransaction(string $tableName, array $partitionKey, \Closure $callback)
     {
