@@ -18,9 +18,7 @@
         "phpstan/phpstan": "*",
         "orchestra/testbench": "*",
         "laravel/sanctum": "*",
-        "hughcube/base": "*",
-        "jenssegers/mongodb": "*",
-        "mongodb/laravel-mongodb": "*"
+        "hughcube/base": "*"
     },
     "autoload": {
         "psr-4": {
