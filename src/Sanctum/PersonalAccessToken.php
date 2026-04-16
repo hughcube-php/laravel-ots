@@ -25,6 +25,8 @@ use Laravel\Sanctum\Contracts\HasAbilities;
 /**
  * OTS-based Personal Access Token for Laravel Sanctum.
  * This implementation does not use Eloquent Model, directly queries OTS table.
+ *
+ * @phpstan-consistent-constructor
  */
 class PersonalAccessToken implements HasAbilities, Arrayable, Jsonable, JsonSerializable
 {
@@ -460,9 +462,21 @@ class PersonalAccessToken implements HasAbilities, Arrayable, Jsonable, JsonSeri
             ['tokenable_id', (string) $this->getAttribute('tokenable_id'), ColumnTypeConst::CONST_STRING],
             ['name', (string) $this->getAttribute('name'), ColumnTypeConst::CONST_STRING],
             ['abilities', $abilitiesJson, ColumnTypeConst::CONST_STRING],
-            ['last_used_at', $lastUsedAt instanceof Carbon ? $lastUsedAt->getTimestamp() : (int) $lastUsedAt, ColumnTypeConst::CONST_INTEGER],
-            ['created_at', $createdAt instanceof Carbon ? $createdAt->getTimestamp() : (int) $createdAt, ColumnTypeConst::CONST_INTEGER],
-            ['updated_at', $updatedAt instanceof Carbon ? $updatedAt->getTimestamp() : (int) $updatedAt, ColumnTypeConst::CONST_INTEGER],
+            [
+                'last_used_at',
+                $lastUsedAt instanceof Carbon ? $lastUsedAt->getTimestamp() : (int) $lastUsedAt,
+                ColumnTypeConst::CONST_INTEGER,
+            ],
+            [
+                'created_at',
+                $createdAt instanceof Carbon ? $createdAt->getTimestamp() : (int) $createdAt,
+                ColumnTypeConst::CONST_INTEGER,
+            ],
+            [
+                'updated_at',
+                $updatedAt instanceof Carbon ? $updatedAt->getTimestamp() : (int) $updatedAt,
+                ColumnTypeConst::CONST_INTEGER,
+            ],
         ];
     }
 

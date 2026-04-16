@@ -113,6 +113,8 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
     /**
      * @inheritdoc
+     *
+     * @return Blueprint
      */
     protected function createBlueprint($table, ?Closure $callback = null)
     {
@@ -170,7 +172,6 @@ class Builder extends \Illuminate\Database\Schema\Builder
      */
     public function dropColumns($table, $columns)
     {
-
     }
 
     /**

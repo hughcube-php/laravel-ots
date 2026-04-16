@@ -18,6 +18,8 @@ use Illuminate\Support\Collection;
  * @property Connection $connection
  *
  * @method Connection getConnection()
+ *
+ * @phpstan-consistent-constructor
  */
 class Builder extends IlluminateBuilder
 {
@@ -388,8 +390,13 @@ class Builder extends IlluminateBuilder
      *
      * @return $this
      */
-    public function searchRange(string $column, $from = null, $to = null, bool $includeFrom = true, bool $includeTo = false)
-    {
+    public function searchRange(
+        string $column,
+        $from = null,
+        $to = null,
+        bool $includeFrom = true,
+        bool $includeTo = false
+    ) {
         $this->searchQueries[] = [
             'type' => QueryTypeConst::RANGE_QUERY,
             'column' => $column,
@@ -509,8 +516,13 @@ class Builder extends IlluminateBuilder
      *
      * @return $this
      */
-    public function searchGeoBoundingBox(string $column, float $topLeftLat, float $topLeftLon, float $bottomRightLat, float $bottomRightLon)
-    {
+    public function searchGeoBoundingBox(
+        string $column,
+        float $topLeftLat,
+        float $topLeftLon,
+        float $bottomRightLat,
+        float $bottomRightLon
+    ) {
         $this->searchQueries[] = [
             'type' => QueryTypeConst::GEO_BOUNDING_BOX_QUERY,
             'column' => $column,

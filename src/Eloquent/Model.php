@@ -8,6 +8,9 @@ use HughCube\Laravel\OTS\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class Model extends BaseModel
 {
     /**
@@ -148,7 +151,16 @@ abstract class Model extends BaseModel
      */
     public function getConnection()
     {
-        return static::resolveConnection($this->getConnectionName());
+        $connection = static::resolveConnection($this->getConnectionName());
+
+        if (!$connection instanceof Connection) {
+            throw new \LogicException(sprintf(
+                'OTS Eloquent model requires an OTS connection, got %s.',
+                get_class($connection)
+            ));
+        }
+
+        return $connection;
     }
 
     /**

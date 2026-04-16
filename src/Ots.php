@@ -17,13 +17,11 @@ class Ots
     /**
      * @param string $name
      *
-     * @throws
+     * @throws Exception
      *
      * @return Connection
      *
      * @deprecated
-     *
-     * @phpstan-ignore-next-line
      */
     public static function connection(string $name = 'ots'): Connection
     {
@@ -80,13 +78,11 @@ class Ots
      * @param mixed  $row
      * @param string $name
      *
-     * @throws
+     * @throws Exception
      *
      * @return int
      *
      * @deprecated
-     *
-     * @phpstan-ignore-next-line
      */
     public static function mustParseRowAutoId($row, string $name = 'id'): int
     {
