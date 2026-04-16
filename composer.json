@@ -9,9 +9,9 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": ">=7.1",
         "ext-json": "*",
-        "aliyun/aliyun-tablestore-sdk-php": "^5.1.5 || ^6.0.1"
+        "aliyun/aliyun-tablestore-sdk-php": "^5.1.3 || ^6.0.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",
@@ -42,6 +42,12 @@
         "phpstan": "phpstan analyse -vvv --memory-limit=-1",
         "check-style": "phpcs -p --standard=PSR2 src/ -v",
         "fix-style": "phpcbf -p --standard=PSR2 src/ -v"
+    },
+    "config": {
+        "audit": {
+            "abandoned": "ignore",
+            "ignore": ["PKSA-tcfz-w4fm-hhk9"]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
