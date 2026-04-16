@@ -33,7 +33,16 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
      */
     public function __construct(IlluminateConnection $connection, $table, ?Closure $callback = null)
     {
-        parent::__construct($connection, $table, $callback);
+        // Laravel >=11 expects (Connection, $table, Closure|null);
+        // older versions expect ($table, Closure|null, $prefix='').
+        $parentCtor = new \ReflectionMethod(parent::class, '__construct');
+        $firstParam = $parentCtor->getParameters()[0] ?? null;
+
+        if ($firstParam && $firstParam->hasType()) {
+            parent::__construct($connection, $table, $callback);
+        } else {
+            parent::__construct($table, $callback);
+        }
     }
 
     /**
