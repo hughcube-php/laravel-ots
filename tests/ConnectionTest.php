@@ -29,6 +29,7 @@ class ConnectionTest extends TestCase
 
     public function testGetOts()
     {
+        $this->skipIfNetworkUnavailable();
         $ots = $this->getConnection()->getOts();
         $this->assertInstanceOf(OTSClient::class, $ots);
 
@@ -38,6 +39,7 @@ class ConnectionTest extends TestCase
 
     public function testGetDatabaseName()
     {
+        $this->skipIfNetworkUnavailable();
         $databaseName = $this->getConnection()->getDatabaseName();
         $this->assertIsString($databaseName);
         $this->assertSame(env('OTS_INSTANCE_NAME'), $databaseName);
@@ -45,6 +47,7 @@ class ConnectionTest extends TestCase
 
     public function testDisconnect()
     {
+        $this->skipIfNetworkUnavailable();
         $connection = $this->getConnection();
         $ots1 = $connection->getOts();
 

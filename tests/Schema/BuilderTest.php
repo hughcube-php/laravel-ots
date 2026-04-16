@@ -36,6 +36,7 @@ class BuilderTest extends TestCase
      */
     public function testHasTable()
     {
+        $this->skipIfNetworkUnavailable();
         $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
@@ -55,6 +56,7 @@ class BuilderTest extends TestCase
 
     public function testHasTableReturnsFalseForNonExistent()
     {
+        $this->skipIfNetworkUnavailable();
         $table = 'nonexistent_table_'.Str::random();
         $this->assertFalse($this->getConnection()->getSchemaBuilder()->hasTable($table));
     }
@@ -77,6 +79,7 @@ class BuilderTest extends TestCase
      */
     public function testCreate()
     {
+        $this->skipIfNetworkUnavailable();
         $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
@@ -118,6 +121,7 @@ class BuilderTest extends TestCase
      */
     public function testCreateWithCustomThroughput()
     {
+        $this->skipIfNetworkUnavailable();
         $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
@@ -146,6 +150,7 @@ class BuilderTest extends TestCase
      */
     public function testDrop()
     {
+        $this->skipIfNetworkUnavailable();
         $table = 'a'.Str::random();
 
         $this->getConnection()->getSchemaBuilder()->dropIfExists($table);
@@ -176,6 +181,7 @@ class BuilderTest extends TestCase
      */
     public function testGetAllTables()
     {
+        $this->skipIfNetworkUnavailable();
         $tables = $this->getConnection()->getSchemaBuilder()->getAllTables();
         $this->assertIsArray($tables);
     }
@@ -186,6 +192,7 @@ class BuilderTest extends TestCase
      */
     public function testDropAllTables()
     {
+        $this->skipIfNetworkUnavailable();
         $table1 = 'a'.Str::random();
         $table2 = 'a'.Str::random();
 
