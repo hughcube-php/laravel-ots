@@ -17,6 +17,7 @@ use Aliyun\OTS\OTSServerException;
 use DateTimeInterface;
 use Exception;
 use HughCube\Laravel\OTS\Exceptions\PartialSuccessResponseException;
+use HughCube\Laravel\OTS\OTS\DefinedColumnApi;
 use HughCube\Laravel\OTS\OTS\Handlers\OTSHandlers;
 use HughCube\Laravel\OTS\OTS\Handlers\RequestContext;
 use Illuminate\Database\Connection as IlluminateConnection;
@@ -277,6 +278,44 @@ class Connection extends IlluminateConnection
     protected function getDefaultQueryGrammar()
     {
         return new Query\Grammar($this);
+    }
+
+    /**
+     * 新增预定义列（AddDefinedColumn）。
+     *
+     * aliyun/aliyun-tablestore-sdk-php 未封装该 API，本方法基于 DefinedColumnApi
+     * 通过手拼 protobuf wire format + 复用 SDK 签名与传输层发起请求。
+     *
+     *     $conn->addDefinedColumn([
+     *         'table_name' => 'questions',
+     *         'columns'    => [
+     *             ['name' => 'score_items', 'type' => 'STRING'],
+     *             ['name' => 'tag_ancestors', 'type' => 'STRING'],
+     *         ],
+     *     ]);
+     *
+     * @throws OTSClientException
+     * @throws OTSServerException
+     */
+    public function addDefinedColumn(array $request): void
+    {
+        (new DefinedColumnApi($this->getOts()))->addDefinedColumn($request);
+    }
+
+    /**
+     * 删除预定义列（DeleteDefinedColumn）。
+     *
+     *     $conn->deleteDefinedColumn([
+     *         'table_name' => 'questions',
+     *         'columns'    => ['score_items', 'tag_ancestors'],
+     *     ]);
+     *
+     * @throws OTSClientException
+     * @throws OTSServerException
+     */
+    public function deleteDefinedColumn(array $request): void
+    {
+        (new DefinedColumnApi($this->getOts()))->deleteDefinedColumn($request);
     }
 
     /**
